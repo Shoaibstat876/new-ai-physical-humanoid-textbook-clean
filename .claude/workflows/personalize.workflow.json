@@ -1,0 +1,18 @@
+{
+  "name": "autoPersonalize",
+  "description": "Automatically personalize textbook chapters based on user level",
+  "steps": [
+    {
+      "id": "getLevel",
+      "action": "auth.getUserPreferredLevel"
+    },
+    {
+      "id": "personalizeDoc",
+      "action": "llm.personalizeDoc",
+      "input": {
+        "doc_id": "{{doc_id}}",
+        "level": "{{steps.getLevel.output.level}}"
+      }
+    }
+  ]
+}

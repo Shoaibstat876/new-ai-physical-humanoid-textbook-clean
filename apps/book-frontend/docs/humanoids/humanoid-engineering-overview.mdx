@@ -1,0 +1,62 @@
+---
+id: humanoid-engineering-overview
+title: Humanoid Robotics — Engineering Overview
+sidebar_label: Chapter 1 — Engineering Overview
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Robotics — Engineering Overview
+
+## Overview
+Humanoid robots are machines designed to move, sense, and interact like humans. They replicate key aspects of the human body—arms, legs, hands, perception systems, and balance—to operate safely and efficiently in human-centered environments. This chapter introduces the engineering foundations behind humanoid robots and explains why their design matters for Physical AI.
+
+## Key Concepts
+- **Embodied Intelligence** — Intelligence expressed through a physical body interacting with the world.
+- **Human-Centric Design** — Robots shaped to use tools, walk through doorways, and fit into environments built for people.
+- **Kinematic Structure** — How joints, links, and limbs connect to create movement.
+- **Actuation & Control** — Motors, torque, sensors, and algorithms enabling stable motion.
+- **Balance & Locomotion** — Keeping upright, shifting weight, and walking dynamically.
+
+## Detailed Explanation
+
+Humanoid robots are uniquely suited for environments that were built for humans rather than machines. Their shape allows them to perform everyday tasks—opening doors, climbing stairs, lifting objects, or pressing buttons—without redesigning buildings or tools. This is why companies building warehouses, hospitals, and factories are exploring humanoids as a scalable labor solution.
+
+The engineering of a humanoid robot begins with **kinematics**. Engineers decide how many joints (degrees of freedom) the robot will have, how each joint moves, and how the robot maintains stability while interacting with objects. A typical humanoid has 20–30 actuated joints enabling walking, reaching, grasping, and manipulating its environment.
+
+Next comes **actuation**. High-torque electric motors, harmonic drives, and series-elastic actuators allow humanoid legs and arms to move smoothly while handling real-world forces. Sensors such as IMUs, joint encoders, torque sensors, and depth cameras continuously measure the robot’s state.
+
+Finally, **control systems** are responsible for transforming perception into physical behavior. Balance controllers keep the robot upright, locomotion planners generate safe footstep patterns, and whole-body control algorithms coordinate all joints to perform complex actions such as lifting a box or avoiding obstacles.
+
+Humanoids are not just machines—they represent the merging of AI reasoning with physical embodiment.
+
+## Example
+Imagine a humanoid robot assisting a teacher in a classroom.  
+It walks to a shelf, picks up a model solar system, and places it on a student’s desk.  
+This simple task requires:
+
+- Vision to locate the shelf  
+- Inverse kinematics to reach the object  
+- Grasp control to hold it securely  
+- Balance algorithms to avoid falling while bending  
+- Locomotion planning to walk safely between desks  
+
+This demonstrates how multiple engineering systems work together seamlessly.
+
+## Real-World Application
+Humanoid robots are beginning to appear in:
+
+- **Warehouses** — Picking, packing, lifting, and transport  
+- **Healthcare** — Patient assistance and logistics  
+- **Education** — Teaching aids, lab assistants, and demonstrations  
+- **Manufacturing** — Repetitive assembly tasks  
+- **Service Robotics** — Reception, customer support, shop-floor help  
+
+Companies like Tesla, Agility Robotics, and Figure AI are leading development of real-world humanoids.
+
+## Summary
+Humanoid robots combine mechanical design, advanced sensing, and intelligent control to operate in human environments. Their engineering foundation—kinematics, actuation, perception, and balance—makes them powerful tools for Physical AI. Understanding these fundamentals prepares learners for deeper topics in locomotion, manipulation, and real-world deployment.
+
+---
+
+<ChapterActions docId="humanoid-robotics/humanoid-engineering-overview" />

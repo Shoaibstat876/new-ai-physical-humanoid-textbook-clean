@@ -1,0 +1,151 @@
+---
+id: ros2-actions
+title: ROS2 Actions — Long-Running Tasks
+sidebar_label: Actions
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# ROS2 Actions — Long-Running Tasks
+
+## Overview
+Some robot tasks take time to finish—walking to a destination, picking up an object, scanning a room, or solving inverse kinematics. These tasks cannot be completed instantly like a service call. ROS2 **Actions** provide a structured way to request long-running tasks, track progress, cancel operations, and receive a final result. Actions are crucial for humanoid robots that must execute complex behaviors while maintaining full control and safety.
+
+---
+
+## Key Concepts
+- **Goal** — A request sent to an action server (e.g., "walk to X", "lift arm").  
+- **Feedback** — Progress updates while the action is running.  
+- **Result** — Final outcome returned after completion.  
+- **Action Client** — Sends goals and receives updates.  
+- **Action Server** — Executes long-running tasks and returns results.  
+- **Canceling Goals** — Client can stop the task anytime for safety.  
+
+---
+
+## Detailed Explanation
+
+### What Are Actions?
+Actions sit between **services** (instant) and **topics** (continuous).  
+They allow a robot to run tasks that:
+
+- take several seconds or minutes  
+- require feedback during execution  
+- must be interruptible  
+- need structured results  
+
+Examples for humanoid robotics:
+
+- Walk 5 meters ahead  
+- Reach an object and grasp it  
+- Scan the environment  
+- Execute a motion sequence  
+
+---
+
+### Action Workflow
+1. **Client sends a goal**  
+2. **Server accepts and starts execution**  
+3. **Server publishes feedback**  
+4. **Client monitors progress**  
+5. **Server returns the final result**  
+6. **Client may cancel at any time**  
+
+---
+
+### Common Humanoid Use Cases
+- **Locomotion** — walking, stair climbing  
+- **Manipulation** — multi-step pick-and-place  
+- **Perception** — mapping, scanning  
+- **System checks** — diagnostics, calibration  
+
+Actions make robots predictable, safe, and reactive.
+
+---
+
+### Action Definition (`.action` file)
+
+```txt
+# Goal
+int32 steps
+---
+# Result
+bool success
+---
+# Feedback
+float32 progress
+
+ROS2 automatically generates Python/C++ classes.
+
+Creating an Action Server (Python)
+import rclpy
+import asyncio
+from rclpy.node import Node
+from rclpy.action import ActionServer
+from example_interfaces.action import Fibonacci
+
+class FibonacciServer(Node):
+    def __init__(self):
+        super().__init__("fibonacci_server")
+        self.action_server = ActionServer(
+            self,
+            Fibonacci,
+            "fibonacci",
+            self.execute_callback
+        )
+
+    async def execute_callback(self, goal_handle):
+        feedback = Fibonacci.Feedback()
+        sequence = [0, 1]
+
+        for i in range(1, goal_handle.request.order):
+            sequence.append(sequence[-1] + sequence[-2])
+            feedback.partial_sequence = sequence
+            goal_handle.publish_feedback(feedback)
+            await asyncio.sleep(1)
+
+        goal_handle.succeed()
+        result = Fibonacci.Result()
+        result.sequence = sequence
+        return result
+
+Creating an Action Client
+
+client = ActionClient(node, Fibonacci, "fibonacci")
+goal = Fibonacci.Goal()
+goal.order = 10
+
+future = client.send_goal_async(
+    goal,
+    feedback_callback=my_feedback
+)
+
+Cancelling an Action
+ros2 action cancel /walk_to_goal
+
+This is essential for humanoid robots when instability or obstacles appear.
+
+Real-World Application
+
+Humanoid robots rely on actions for:
+
+Navigating dynamic environments
+
+Performing multi-step manipulation
+
+Running locomotion behaviors with live adjustments
+
+Inspecting industrial sites
+
+Executing full routines (pick → place → return → standby)
+
+Actions allow robots to remain responsive while performing demanding tasks.
+
+Summary
+
+ROS2 Actions handle long-running, interruptible tasks with structured feedback.
+
+Critical for locomotion, manipulation, perception, and high-level robotics behaviors.
+
+Clients send goals, servers execute tasks, and robots stay responsive and safe.
+
+<ChapterActions docId="ros2/ros2-actions" /> ```

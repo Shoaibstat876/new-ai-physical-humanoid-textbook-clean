@@ -1,0 +1,195 @@
+---
+id: capstone-testing-validation
+title: Testing & Validation
+sidebar_label: Testing & Validation
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Testing & Validation
+
+## Overview
+After designing the architecture, the next major phase of the Capstone is **testing and validation**.  
+This chapter teaches how to evaluate whether your system works, how to detect failures early, and how to validate that the robot behaves correctly in both simulation and real-world environments. The goal is to ensure your Capstone is stable, predictable, and reliable — just like a professional robotics project.
+
+---
+
+## Key Concepts
+- **Unit Testing** — Validate individual ROS 2 nodes.
+- **Integration Testing** — Ensure nodes communicate correctly.
+- **Simulation Testing** — Validate robot behavior inside Isaac Sim.
+- **Stress Testing** — Push the system to its limits.
+- **Benchmarking** — Measure speed, accuracy, and stability.
+
+---
+
+## Detailed Explanation
+
+### 1. Why Testing Matters
+Robots operate in unpredictable environments.  
+A small bug in perception, control, or AI decision-making can lead to:
+
+- incorrect responses  
+- motion instability  
+- safety hazards  
+- system crashes  
+
+Testing ensures that your Capstone behaves as expected, even when given unusual inputs.
+
+---
+
+### 2. Levels of Testing in Robotics
+
+#### **A. Unit Testing (ROS 2 Node-Level)**
+Each node should be tested individually.
+
+Examples:
+- Does `/perception_node` correctly publish detections?
+- Does `/planner_node` choose the right next state?
+- Does `/control_node` send correct velocity commands?
+
+Tools:
+- `rostest`
+- Python `pytest`
+- ROS 2 launch test framework
+
+---
+
+#### **B. Integration Testing**
+This validates how nodes communicate.
+
+Key questions:
+- Are messages published at the correct rate?
+- Are message types correct?
+- Does the planner receive detections without delay?
+- Do actions complete successfully?
+
+Example:
+Simulate a "raise hand" detection → check if the robot turns head.
+
+---
+
+#### **C. Simulation Testing (Isaac Sim)**
+Before touching real hardware, everything must work in Isaac Sim.
+
+Test:
+- arm motions  
+- walking stability  
+- perception robustness  
+- timing between nodes  
+- AI responses in realistic scenes  
+
+Isaac Sim provides:
+- replayable scenarios  
+- camera noise  
+- lighting variations  
+- multiple environments  
+
+This makes robot testing far safer and faster.
+
+---
+
+#### **D. Stress Testing**
+Push the system beyond normal conditions.
+
+Examples:
+- High message frequency  
+- Multiple detections at once  
+- Fast user interactions  
+- Poor lighting  
+- Occluded camera view  
+
+You observe whether the robot:
+- crashes  
+- lags  
+- misses detections  
+- becomes unstable  
+
+A strong Capstone survives these stress tests.
+
+---
+
+#### **E. Benchmarking**
+Measure performance metrics:
+
+| Metric | Why It Matters |
+|--------|----------------|
+| FPS (camera throughput) | Ensures real-time perception |
+| Latency | Critical for responsive robots |
+| Inference speed | LLM + vision model must be fast |
+| Control loop frequency | Needed for balance + smooth motion |
+| Task completion time | Measures efficiency |
+
+This is the type of testing judged in real robotics competitions.
+
+---
+
+### 3. Creating a Test Plan for Your Capstone
+
+A simple testing plan includes:
+
+#### **1. Test Cases**
+Examples:
+- "Robot must greet person within 1.5 seconds of detection"
+- "Planner transitions correctly from IDLE → LISTEN → RESPOND"
+- "Control node never sends invalid velocity commands"
+
+#### **2. Expected Output**
+Define:
+- behaviors  
+- messages  
+- timing  
+- accuracy thresholds  
+
+#### **3. Tools**
+- ROS 2 bag files  
+- Isaac Sim recordings  
+- Python notebooks  
+- Visualization (RViz / Isaac UI)  
+
+#### **4. Validation Criteria**
+Pass / fail rules:
+- 90% detection accuracy
+- Motion smoothness < threshold
+- No dropped ROS 2 messages at 10 Hz
+- LLM response < 2 seconds
+
+---
+
+### 4. Example Test Workflow
+
+1. **Record a test scenario** in Isaac Sim (student waving, walking, speaking).
+2. **Replay multiple times** while adjusting lighting and camera angle.
+3. **Verify perception output**:  
+   - Are hands detected?  
+   - Are objects recognized?  
+4. **Check planner decisions** using logging.
+5. **Monitor control signals** using `rqt_graph` and `rqt_plot`.
+6. **Evaluate final robot motion** in the simulator.
+7. **Fix errors → retest → validate.**
+
+This loop continues until performance is stable.
+
+---
+
+## Real-World Application
+Every robotics company uses structured validation:
+
+- **Agility Robotics** stresses-test Digit for thousands of cycles.  
+- **Tesla Optimus** runs through repeated scripted scenarios.  
+- **NVIDIA Robotics** uses Isaac Sim for full system validation at scale.  
+
+Your Capstone must follow these same practices to demonstrate real engineering skill.
+
+---
+
+## Summary
+- Testing ensures safety, correctness, and smooth robot behavior.  
+- Validate nodes individually, then test them together.  
+- Isaac Sim is essential for pre-hardware testing.  
+- Stress tests and benchmarks help measure system reliability.  
+- A formal test plan brings your Capstone to industry standards.
+
+---
+
+<ChapterActions docId="capstone/testing-and-validation" />

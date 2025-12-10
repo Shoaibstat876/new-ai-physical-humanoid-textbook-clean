@@ -1,0 +1,108 @@
+---
+id: ros2-introduction
+title: Introduction to ROS2
+sidebar_label: Introduction to ROS2
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Introduction to ROS2
+
+## Overview
+ROS2 (Robot Operating System 2) is the modern open-source framework used by real robots across the world—from warehouse robots to advanced humanoids.  
+It provides tools, libraries, and communication patterns that allow developers to build reliable robotic systems.  
+In this chapter, you will learn what ROS2 is, why it matters, and how it becomes the backbone connecting sensors, motors, algorithms, and AI models in humanoid robots.
+
+---
+
+## Key Concepts
+- **ROS2 as a Middleware** — Manages communication between sensors, controllers, and AI modules.  
+- **Distributed Architecture** — Nodes can run on multiple CPUs, GPUs, or different computers.  
+- **DDS Communication** — The real-time messaging backbone of ROS2.  
+- **Modularity & Reusability** — ROS2 packages allow scalable and maintainable robotics development.  
+- **Why ROS2 Matters for Humanoids** — Complex robots need reliable, structured, low-latency communication.
+
+---
+
+## Detailed Explanation
+ROS2 is not a traditional operating system. Instead, it acts as a **communication layer** that lets independent robot components exchange data efficiently.
+
+A distance sensor, a locomotion controller, and an AI movement planner all run separately but communicate smoothly through ROS2.
+
+### DDS: The Heart of ROS2
+ROS2 uses **DDS (Data Distribution Service)** to enable:
+
+- Real-time data exchange  
+- Low latency  
+- Automatic node discovery  
+- Robust distributed systems  
+
+This is essential for humanoid robots where delays can cause instability or unsafe motion.
+
+### Modularity
+ROS2 organizes functionality into **packages**:
+
+- Camera drivers  
+- LiDAR drivers  
+- Mapping  
+- Navigation  
+- Motion planning  
+- Whole-body control  
+
+You can reuse these instead of building everything from scratch.  
+This modularity is why companies like **Boston Dynamics**, **Figure**, **NVIDIA**, and **Open Robotics** rely on ROS2.
+
+### Cross-Platform Robotics
+ROS2 runs on:
+
+- Linux  
+- Windows  
+- Embedded systems (microcontrollers, SBCs)  
+
+Many humanoids run multiple ROS2 computers simultaneously:
+
+- Vision computer  
+- Control computer  
+- Locomotion computer  
+
+DDS keeps them synchronized and stable.
+
+### ROS2 + AI
+AI systems can run on a separate GPU server and publish high-level commands over ROS2.  
+Low-level controllers execute safe, smooth motions.
+
+This separation of intelligence (AI) and actuation (control) mirrors modern humanoid robot architecture.
+
+---
+
+## Example
+A humanoid robot takes a step:
+
+1. Foot pressure sensor **publishes** weight distribution.  
+2. Balance controller **subscribes** and calculates stability corrections.  
+3. Locomotion node receives a target and computes a walking trajectory.  
+4. Motor controllers **execute** the motion.
+
+Each module communicates through ROS2 topics and services — no module needs internal knowledge of the others.
+
+---
+
+## Real-World Application
+- **Figure 01 Humanoid** uses ROS2-like messaging for balance, locomotion, and perception.  
+- **NVIDIA Isaac platforms** use ROS2 bridges for simulation ↔ real robot integration.  
+- **Warehouse robots** coordinate tasks using ROS2 topics.  
+- **Medical and surgical robots** rely on ROS2 for real-time movement pipelines.  
+
+ROS2 has become the industry standard for robotics communication.
+
+---
+
+## Summary
+- ROS2 enables seamless communication between sensors, AI, controllers, and actuators.  
+- It is modular, scalable, and real-time.  
+- DDS ensures low latency and reliable distributed systems.  
+- ROS2 is essential for building safe, intelligent humanoid robots.
+
+---
+
+<ChapterActions docId="ros2/ros2-introduction" />

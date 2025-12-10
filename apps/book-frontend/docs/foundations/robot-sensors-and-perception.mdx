@@ -1,0 +1,81 @@
+---
+id: robot-sensors-and-perception
+title: Robot Sensors & Perception
+sidebar_label: Sensors & Perception
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Robot Sensors & Perception
+
+## Overview
+Robots experience the world through sensors. Just as humans rely on eyes, ears, and touch to understand their surroundings, robots use cameras, lidar, microphones, IMUs, and force sensors to gather information. This process—collecting raw data and converting it into meaningful understanding—is called *perception*. Without perception, robots cannot move safely, make decisions, or interact with objects and people.
+
+## Key Concepts
+- **Sensors** — Devices that capture information about the environment, such as light, distance, motion, or sound.
+- **Perception Pipeline** — The sequence of steps from raw sensor data → filtering → interpretation.
+- **Localization** — Determining where the robot is in the world.
+- **Mapping** — Building a representation of the surroundings.
+- **Sensor Fusion** — Combining multiple sensors for stronger, more reliable perception.
+
+## Detailed Explanation
+
+### 1. What Are Sensors?
+Sensors are the robot’s connection to the physical world. Cameras detect light, lidar measures distances, IMUs detect orientation, and microphones capture sound. Each sensor has strengths and limitations—cameras work well in daylight, lidar works well in darkness, and IMUs help when visuals are unreliable.
+
+### 2. The Perception Pipeline
+Raw sensor inputs are usually noisy and incomplete. A typical pipeline includes:
+1. **Capture** — The sensor records raw signals.  
+2. **Filter** — Noise is reduced to make readings usable.  
+3. **Extract Features** — The system identifies lines, edges, colors, or motion.  
+4. **Interpretation** — The robot decides what the features mean (e.g., “a door”, “a person”, “a step”).  
+
+Modern robots often use **AI-based perception**, especially deep learning models, for recognizing objects, estimating depth, or detecting human poses.
+
+### 3. Localization and Mapping (SLAM)
+Robots must know **where they are** and **what the surroundings look like**.  
+SLAM (Simultaneous Localization and Mapping) allows a robot to:
+- Move through unknown spaces  
+- Build its own map  
+- Track its own position inside that map  
+
+Humanoids depend heavily on SLAM to maintain balance, plan footsteps, and avoid obstacles.
+
+### 4. Sensor Fusion
+No single sensor is perfect.  
+Sensor fusion merges:
+- Camera + IMU for stable motion tracking  
+- Lidar + depth camera for accurate 3D maps  
+- Force sensors + joint encoders for precise manipulation  
+
+This produces more robust perception, similar to how humans use multiple senses at once.
+
+## Example
+A humanoid robot walks down a hallway.  
+- Cameras detect walls and doors.  
+- IMU tracks the robot’s body tilt and orientation.  
+- Lidar measures distances to obstacles.  
+- A perception model identifies a person approaching.  
+
+All sensors work together to help the robot avoid collision, stay balanced, and interact safely.
+
+## Real-World Application
+Sensor-based perception is used in:
+- Self-driving cars (cameras, radar, lidar)  
+- Delivery robots navigating sidewalks  
+- Industrial robot arms picking objects  
+- Drones maintaining stable flight  
+- Humanoid robots interacting with humans in real spaces  
+
+Without accurate perception, these systems would fail instantly—even a small mistake can cause crashes, unsafe moves, or complete loss of control.
+
+## Summary
+- Sensors allow robots to understand the world.  
+- Perception converts sensor data into meaningful information.  
+- Localization, mapping, and sensor fusion make robots reliable.  
+- Humanoids rely heavily on perception to walk, grasp, and interact safely.  
+- Perception is the foundation of intelligent physical behavior.
+
+---
+
+<ChapterActions docId="foundations/robot-sensors-and-perception" />

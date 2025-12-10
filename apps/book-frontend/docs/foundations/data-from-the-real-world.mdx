@@ -1,0 +1,109 @@
+---
+id: data-from-the-real-world
+title: From Data to Intelligence
+sidebar_label: Data → Intelligence
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# From Data to Intelligence: How Robots Learn from the Real World
+
+## Overview
+Robots become intelligent not by memorizing facts, but by learning from **real-world data**.  
+Physical AI focuses on how robots gather sensory information, transform it into meaningful knowledge, and use that knowledge to make decisions, move, and interact safely with humans.
+
+This chapter explains how data becomes intelligence inside a humanoid robot.
+
+## Key Concepts
+- **Raw Data** — Unprocessed signals from sensors such as cameras, depth sensors, and IMUs.
+- **Feature Extraction** — AI models convert raw data into meaningful patterns.
+- **World Models** — Internal maps that represent objects, motion, and environment.
+- **Learning From Interaction** — Robots improve by performing actions and observing outcomes.
+- **Embodied Intelligence** — Learning that happens through physical interaction, not just text.
+
+## Detailed Explanation
+
+### 1. Raw Data Capture
+A humanoid robot continuously collects:
+
+- Images from cameras  
+- Distance measurements from LiDAR  
+- Body movement from IMUs  
+- Sound from microphones  
+- Touch and force readings  
+
+This data is noisy, incomplete, and constantly changing.  
+AI must filter and organize it before it becomes useful.
+
+### 2. Feature Extraction
+AI systems transform raw signals into recognizable patterns:
+
+- Edges, shapes, and objects in images  
+- Depth and motion from multiple frames  
+- Balance and orientation from IMUs  
+- Pressure patterns from force sensors  
+
+These features help the robot understand **what** it is seeing and **how** it is moving.
+
+### 3. Building a World Model
+A world model is an internal representation of the robot’s surroundings.
+
+It answers questions like:
+
+- Where am I in this room?  
+- Where is the table?  
+- Is anything moving?  
+- Is the path safe?  
+
+Humanoid robots rely on world models to walk, climb stairs, pick objects, or avoid collisions.
+
+### 4. Learning Through Interaction (Embodied Learning)
+Traditional AI learns from text or images.  
+Physical AI learns from **doing**.
+
+Example:
+
+- The robot tries to pick up a cup  
+- The grip slips  
+- It adjusts pressure next time  
+
+This feedback loop improves the robot’s skill over time.
+
+Humans learn the same way—by trying, failing, and improving.
+
+### 5. Why Real-World Data Matters
+Simulations are helpful, but real environments are messy:
+
+- Poor lighting  
+- Unexpected obstacles  
+- Object variation  
+- Human unpredictability  
+
+Real-world data teaches robots to be adaptable and safe.
+
+## Example
+A humanoid robot learning to walk on uneven ground:
+
+1. Sensors capture tilt and foot pressure  
+2. AI detects instability  
+3. Robot shifts weight to avoid falling  
+4. Outcome is evaluated  
+5. Learning updates balance strategy  
+
+Repeating this thousands of times builds robust walking ability.
+
+## Real-World Application
+- Warehouse robots learning optimal picking strategies  
+- Autonomous vehicles training on millions of real-world scenarios  
+- Assistive humanoid robots adapting to each household  
+- Industrial robots adjusting grip based on object shape and weight  
+- Drones refining flight paths through trial and error  
+
+Embodied learning makes robots flexible, reliable, and intelligent in unpredictable environments.
+
+## Summary
+Real-world data is the foundation of robotic intelligence.  
+Sensors capture signals, AI extracts patterns, world models provide understanding, and embodied learning turns experience into skill.  
+This deeply connected cycle enables humanoid robots to act intelligently and safely in human environments.
+
+<ChapterActions docId="foundations/data-from-the-real-world" />

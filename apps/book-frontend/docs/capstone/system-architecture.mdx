@@ -1,0 +1,182 @@
+---
+id: capstone-system-architecture
+title: System Architecture
+sidebar_label: System Architecture
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# System Architecture
+
+## Overview
+Once the problem is defined, the next step is to design the **system architecture**—a high-level blueprint showing how every part of your robot or simulation contributes to solving the task. This chapter explains how to design clear, modular architectures using ROS 2, Isaac Sim, perception pipelines, control systems, and AI components. A well-structured architecture makes your Capstone scalable, testable, and easier to implement.
+
+---
+
+## Key Concepts
+- **Modularity** — Break your robot’s system into clean logical blocks.
+- **Data Flow** — Understand how information moves between nodes.
+- **Computation Pipeline** — Perception → Decision → Action.
+- **Simulation Integration** — How Isaac Sim connects with ROS 2.
+- **Hardware Abstraction** — Treat sensors and actuators as interchangeable modules.
+
+---
+
+## Detailed Explanation
+
+### 1. What Is System Architecture?
+System architecture describes how all the major components of your Capstone fit together.  
+It answers questions like:
+- Which ROS 2 nodes will you create?
+- How will camera data flow into a perception model?
+- How will decision-making logic trigger motions?
+- How does simulation communicate with your control stack?
+
+Architects think in terms of **blocks and connections**, not low-level code.
+
+### 2. The Three Core Layers of Robotics Architecture
+Most modern robotics projects—including humanoids—use a layered structure:
+
+---
+
+#### **Layer 1: Perception Layer**
+Responsible for interpreting raw data from the environment.
+
+Typical components:
+- Camera or depth sensor driver
+- Object detection / gesture detection
+- Human-intent recognition
+- Environment mapping (optional)
+- Preprocessing (image resizing, normalization)
+
+**Output:** Structured information  
+(e.g., “Student raised hand,” “Obstacle at 2.3 m,” “Object detected: book.”)
+
+---
+
+#### **Layer 2: Decision / Planning Layer**
+This layer decides *what to do next*.
+
+Examples:
+- Finite State Machines (FSMs)
+- Behavior trees
+- LLM-based conversational decision-making
+- Rule-based logic
+- Navigation planners
+
+**Output:** A desired action  
+(e.g., “Walk to student,” “Answer question,” “Pick object.”)
+
+---
+
+#### **Layer 3: Control & Actuation Layer**
+This layer executes the commands from planning.
+
+Examples:
+- Joint controllers
+- Locomotion engine
+- Gripper control
+- Balance stabilization
+- ROS 2 action servers
+
+**Output:** Physical movement or robot action  
+(e.g., step forward, turn head, raise arm).
+
+---
+
+### 3. ROS 2 Node Architecture for Your Capstone
+Your Capstone will normally include nodes such as:
+
+| Node | Purpose |
+|------|---------|
+| **/camera_node** | Publishes RGB or depth frames |
+| **/perception_node** | Runs detection models (hands, objects, text) |
+| **/audio_llm_node** | Conversational AI or Q&A engine |
+| **/planner_node** | Decides next robot action |
+| **/control_node** | Sends motion commands to robot or simulation |
+| **/sim_bridge_node** | Connects Isaac Sim to ROS 2 topics/actions |
+
+These nodes communicate using:
+- Topics  
+- Services  
+- Actions  
+
+This modularity allows you to replace any component without breaking the system.
+
+---
+
+### 4. Isaac Sim + ROS 2 Integration
+Isaac Sim acts as your **virtual world** and robot environment.  
+It communicates with ROS 2 through:
+
+- `/joint_states`  
+- `/cmd_vel`  
+- `/tf` transforms  
+- Custom sensor topics (camera, lidar)  
+- Action servers for navigation/motion  
+
+You treat Isaac Sim exactly like physical hardware—your ROS 2 nodes don’t care whether the robot is real or simulated.  
+This is called **hardware abstraction**.
+
+---
+
+### 5. Example Architecture (Classroom Assistant Robot)
+
+      +-------------------+
+      |   Camera Sensor   |
+      +---------+---------+
+                |
+                v
+    +-----------+-----------+
+    |      Perception       |
+    |  - Hand Detection     |
+    |  - Object Detection   |
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |       Planner         |
+    | - Decide Response     |
+    | - Behavior Control    |
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |     Control Node      |
+    | - Head Turn           |
+    | - Walk Command        |
+    +-----------+-----------+
+                |
+                v
+      +---------+---------+
+      |     Isaac Sim     |
+      +-------------------+
+
+This is a typical production-quality pipeline used by real robotics teams.
+
+---
+
+## Real-World Application
+Companies like Boston Dynamics, Agility Robotics, and NVIDIA follow similar architecture patterns.  
+Why?
+
+Because:
+- Each module can be improved independently  
+- Testing becomes easier  
+- AI, perception, and control systems remain decoupled  
+- Simulation and hardware can be swapped instantly  
+
+Your Capstone must follow this style to be industry-ready.
+
+---
+
+## Summary
+- System architecture defines how your robot’s components interact.  
+- A good architecture follows Perception → Decision → Control.  
+- ROS 2 provides modular nodes for clean data flow.  
+- Isaac Sim acts as hardware through ROS 2 bridges.  
+- With this chapter, you now have a professional template for designing your full Capstone system.
+
+---
+
+<ChapterActions docId="capstone/system-architecture" />

@@ -1,0 +1,100 @@
+---
+id: ros2-nodes-topics
+title: ROS2 Nodes, Topics & Communication
+sidebar_label: Nodes & Topics
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# ROS2 Nodes, Topics & Communication
+
+## Overview
+ROS2 systems are made up of small, independent programs called *nodes*.  
+These nodes communicate using *topics* through a publish–subscribe model.  
+This chapter introduces the communication backbone of ROS2 and explains how data flows inside a robot, especially a humanoid robot with many sensors and controllers working simultaneously.
+
+---
+
+## Key Concepts
+- **Node** — A single executable that performs one specific job.  
+- **Topic** — A named communication channel used to exchange messages.  
+- **Publisher** — A node that sends messages on a topic.  
+- **Subscriber** — A node that listens for messages on a topic.  
+- **Message Types** — Structured data formats (e.g., `sensor_msgs/Image`).  
+- **Decoupling** — Nodes do not need to know each other's code; only the topic name and message type.
+
+---
+
+## Detailed Explanation
+A robot is a collection of tasks happening simultaneously.  
+Sensors read data, motors move joints, and higher-level AI modules make decisions.  
+In ROS2, each task runs as a separate **node**, making the system:
+
+- modular  
+- scalable  
+- easier to debug  
+- distributed across multiple CPUs or machines  
+
+### Topics & Publish–Subscribe
+Nodes communicate using **topics**.  
+A topic is simply a name like:
+
+- `/camera/color`  
+- `/joint_states`  
+- `/imu/data`  
+
+A *publisher* sends messages on a topic, and any *subscriber* listening to that topic receives the data immediately.
+
+### Decoupling
+Publishers and subscribers do not know about each other.  
+This allows:
+
+- swapping components easily  
+- running multiple subscribers  
+- replacing sensors without editing other code  
+
+### Message Types
+Standard message types (e.g., `geometry_msgs/Twist`, `sensor_msgs/Image`) ensure compatibility across the system.
+
+### Humanoid Example
+Humanoid robots may have dozens of topics:
+
+- IMU → `/imu/data`  
+- Foot pressure sensors → `/foot/pressure`  
+- Vision → `/camera/rgb`  
+- Joint controllers → `/joint/command`  
+
+DDS ensures all this data is exchanged with low latency.
+
+---
+
+## Example
+A simple ROS2 data flow for a walking humanoid:
+
+1. Foot sensor node **publishes** weight distribution → `/foot/pressure`  
+2. Balance node **subscribes** and computes stability  
+3. Locomotion node **subscribes** and publishes joint angles → `/joint/command`  
+4. Motor controllers **subscribe** and execute movement  
+
+Each component is an independent node communicating through topics.
+
+---
+
+## Real-World Application
+- Humanoids use topics to stream IMU data for balancing (hundreds of Hz).  
+- Self-driving robots use camera + LiDAR topics for perception.  
+- Industrial arms use safety topics to override motion instantly.  
+
+Companies like **Boston Dynamics, Figure AI, Agility Robotics, and NVIDIA** design their communication systems around ROS2 topics and nodes.
+
+---
+
+## Summary
+- Nodes are independent programs inside a robot.  
+- Topics allow them to communicate using publish–subscribe messaging.  
+- DDS provides fast, reliable communication.  
+- This architecture makes humanoid robots modular, scalable, and safe.
+
+---
+
+<ChapterActions docId="ros2/ros2-nodes-topics" />

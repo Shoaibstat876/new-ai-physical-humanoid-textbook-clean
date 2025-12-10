@@ -1,0 +1,36 @@
+# Python virtual environments
+.venv/
+venv/
+
+apps/rag-backend/.venv/
+
+# Bytecode & cache
+__pycache__/
+*.pyc
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Node.js
+node_modules/
+
+# Docusaurus build output
+apps/book-frontend/build/
+apps/book-frontend/.docusaurus/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,131 @@
+---
+id: physics-and-materials
+title: Physics & Materials in Isaac Sim
+sidebar_label: Physics & Materials
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Physics & Materials in Isaac Sim
+
+## Overview
+Physics is the engine that makes virtual robots behave like real ones.  
+Isaac Sim uses NVIDIA PhysX to simulate gravity, collisions, friction, joint movement, and object interactions with high realism.  
+Understanding physics and materials allows you to create believable humanoid behaviors—walking, balancing, grasping, lifting, and interacting with the world safely.
+
+---
+
+## Key Concepts
+
+- **Rigid Bodies** — Objects that obey physics rules like mass, forces, and collisions.  
+- **Articulations** — Multi-joint systems (e.g., humanoid robots) with realistic constraints.  
+- **Colliders** — Invisible shapes defining how objects collide.  
+- **Material Properties** — Friction, restitution (bounciness), and density affecting movement.  
+- **Gravity & Forces** — Global and local forces that influence robot stability.  
+
+---
+
+## Detailed Explanation
+
+In Isaac Sim, all physical objects follow the PhysX engine.  
+This ensures that a humanoid robot falls, balances, and interacts with objects realistically.
+
+### **Rigid Bodies**
+Rigid bodies represent solid physical objects—like a cube, chair, or robot link.  
+They have properties such as:
+
+- Mass  
+- Linear and angular damping  
+- Collision detection  
+- Friction and restitution  
+
+Correct tuning prevents unstable or unrealistic behavior.
+
+### **Articulations**
+Humanoid robots are articulated systems.  
+Each joint has:
+
+- Limits (how far it can rotate)  
+- Stiffness and damping  
+- Motor forces  
+- Controller inputs  
+
+Proper articulation settings are essential for walking, climbing stairs, or manipulating objects.
+
+### **Colliders**
+Colliders define how a shape interacts with others during collisions.  
+Isaac Sim supports:
+
+- Box colliders  
+- Capsule colliders  
+- Mesh colliders  
+
+For humanoids, capsules are often used for limbs because they mimic natural shape and avoid snagging.
+
+### **Material Properties**
+Material settings determine how objects interact:
+
+| Property | Meaning |
+|---------|---------|
+| **Static friction** | Grip while not sliding |
+| **Dynamic friction** | Grip while sliding |
+| **Restitution** | Bounciness |
+| **Density** | How heavy an object feels per volume |
+
+Example:  
+A humanoid foot should have **high friction** to prevent slipping, while a robot hand might use moderate friction for smooth manipulation.
+
+### **Gravity & Forces**
+Isaac Sim uses Earth-like gravity by default:
+
+-9.81 m/s²
+
+You can also apply:
+
+- Impulse forces  
+- Continuous forces  
+- Torques  
+
+These help test balance, push recovery, and stability algorithms.
+
+---
+
+## Example
+
+Let’s simulate a humanoid robot walking on a smooth floor:
+
+1. Assign a **rigid body** to each link (torso, arms, legs).  
+2. Set realistic **joint limits** and stiffness for articulations.  
+3. Ensure each limb has proper **colliders** (capsules for legs, boxes for feet).  
+4. Use materials with:  
+   - Static friction: 0.8  
+   - Dynamic friction: 0.6  
+   - Restitution: 0.0  
+5. Play the simulation and check if the robot slips or falls.  
+6. Adjust friction or mass distribution if needed.
+
+This physics loop helps refine locomotion quality.
+
+---
+
+## Real-World Application
+
+- **Humanoid robot companies** use PhysX simulation to test walking and balancing before trying risky experiments on hardware.  
+- **Self-driving car teams** simulate collisions and material properties for accurate safety tests.  
+- **Manufacturing robots** use material tuning to grip objects reliably.  
+- **AI research teams** generate synthetic data with realistic physics for vision and reinforcement learning.  
+
+Physics accuracy reduces hardware damage and speeds up development.
+
+---
+
+## Summary
+
+- Isaac Sim uses PhysX to model gravity, collisions, and articulation.  
+- Material settings control friction, bounciness, and density.  
+- Colliders define how objects interact in the simulation.  
+- Physics tuning is essential for believable humanoid movements.  
+- Mastery of physics leads to safer, more reliable robot development.
+
+---
+
+<ChapterActions docId="isaac-sim/physics-and-materials" />

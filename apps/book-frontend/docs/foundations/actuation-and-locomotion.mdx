@@ -1,0 +1,142 @@
+---
+id: actuation-and-locomotion
+title: Actuation & Locomotion in Humanoid Robots
+sidebar_label: Actuation & Locomotion
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Actuation & Locomotion in Humanoid Robots
+
+## Overview
+Locomotion is one of the most defining capabilities of humanoid robots. It enables robots to walk, balance, climb stairs, lift objects, and operate in environments designed for humans. This chapter explains how actuators generate motion, how joints work together to form complex movements, and why balance control is essential for safe operation.
+
+## Key Concepts
+- **Actuators** — Motors or artificial muscles that create motion by converting energy into movement.
+- **Degrees of Freedom (DoF)** — The number of independent ways a joint can move.
+- **Kinematics & Dynamics** — Mathematical models that describe robot motion.
+- **Gait Patterns** — Walking styles such as heel-toe, flat-foot, or dynamic running.
+- **Balance & Stability** — Ensuring the robot does not fall during movement.
+
+---
+
+## Detailed Explanation
+
+### 1. What Are Actuators?
+Actuators are the “muscles” of a humanoid robot. They can be:
+- **Electric motors** (most common)
+- **Hydraulic actuators** (used in heavy robots and Boston Dynamics-style machines)
+- **Pneumatic actuators** (soft robots)
+- **Artificial muscles** (emerging technologies)
+
+In humanoid robots, actuators must be:
+- Strong enough to lift limbs  
+- Fast enough for quick adjustments  
+- Precise enough for controlled movements  
+
+### 2. Joint Structure & Degrees of Freedom
+Every joint in a humanoid robot provides a certain range of motion.  
+For example:
+- The **shoulder** has 3 DoF  
+- The **elbow** has 1 DoF  
+- The **hip** has 3 DoF  
+- The **ankle** has 2 DoF  
+
+The total DoF allows the robot to move in humanlike ways. More DoF → more flexibility, but also more complex control.
+
+### 3. Kinematics: How Motion Is Calculated
+Humanoid movement is not random; it is computed through two mathematical systems:
+
+#### **Forward Kinematics (FK)**
+Given joint angles → calculate where the limb ends up.
+
+#### **Inverse Kinematics (IK)**
+Given a target position → calculate the joint angles required to reach it.
+
+IK is essential for tasks like:
+- Picking up objects  
+- Climbing stairs  
+- Keeping balance while leaning  
+
+Humanoid robots use IK thousands of times per second.
+
+### 4. Dynamics: Forces, Mass & Balance
+Locomotion is not only about movement — it’s about **surviving gravity**.
+
+Robots must calculate:
+- Center of Mass (CoM)  
+- Foot placement  
+- Ground reaction forces  
+- Torque at each joint  
+
+If these are wrong, the robot falls.
+
+### 5. Walking & Gait Control
+Humanoid walking is a sequence of controlled falls. The robot shifts its weight and ensures one foot is always positioned to catch itself.
+
+Common gait strategies:
+- **Quasi-static walking** (slow, stable)  
+- **Dynamic walking** (more humanlike)  
+- **Running gaits** (advanced robots only)  
+
+The controller continuously adjusts:
+- Step length  
+- Step height  
+- Body posture  
+- Joint stiffness  
+
+### 6. Balance Control Systems
+Robots use both **sensors** and **control algorithms** to stay upright.
+
+Sensors used:
+- IMU (gyroscope + accelerometer)  
+- Foot pressure sensors  
+- Joint position sensors  
+
+Algorithms used:
+- PID controllers  
+- Model Predictive Control (MPC)  
+- Whole-body control  
+
+Stability is the hardest challenge in humanoid robotics — more difficult than vision or AI.
+
+---
+
+## Example
+
+A humanoid robot wants to lift its right foot to take a step.
+
+The robot must:
+1. Shift weight to the left leg (balance)  
+2. Adjust torso to keep CoM within the support region  
+3. Compute joint angles using IK  
+4. Activate hip/knee/ankle actuators  
+5. Place the foot forward  
+6. Move the torso to prepare for the next step  
+
+If any step fails → the robot falls.
+
+---
+
+## Real-World Application
+
+Actuation and locomotion are essential in industries where robots work alongside humans:
+
+- **Healthcare**: humanoid assistants that walk around hospitals  
+- **Manufacturing**: robots navigating factory floors  
+- **Logistics**: warehouse robots climbing stairs or handling objects  
+- **Home robotics**: future personal assistant robots  
+
+Efficient locomotion makes robots useful in human-designed spaces.
+
+---
+
+## Summary
+- Actuators generate movement in humanoid robots.  
+- Motion is controlled using kinematics, dynamics, and gait algorithms.  
+- Balance is the central challenge in humanoid robotics.  
+- Locomotion enables robots to operate safely and effectively in real-world environments.
+
+---
+
+<ChapterActions docId="foundations/actuation-and-locomotion" />

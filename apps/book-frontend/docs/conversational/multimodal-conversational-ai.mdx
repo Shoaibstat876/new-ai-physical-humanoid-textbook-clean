@@ -1,0 +1,126 @@
+---
+id: conversational-multimodal-ai
+title: Multimodal Conversational AI
+sidebar_label: Multimodal AI
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Multimodal Conversational AI
+
+## Overview  
+Multimodal Conversational AI integrates **speech, vision, text, and sensor inputs** so robots can understand humans naturally. Instead of relying only on typed commands, humanoid robots use microphones, cameras, and tactile sensors to interpret real-world context and respond intelligently.
+
+This chapter explains how multimodal models enable robots to transition from "chatbots on wheels" to **true interactive partners** capable of perceiving and acting in the physical world.
+
+## Key Concepts  
+- **Multimodal Inputs** — Combining voice, images, gestures, and text.  
+- **Vision-Language Models (VLMs)** — Models that understand images + instructions.  
+- **Speech-to-Text (ASR)** — Converts voice to words.  
+- **Embodied Understanding** — Linking messages to objects in the robot’s view.  
+- **Action Grounding** — Mapping human commands to physical robot actions.
+
+## Detailed Explanation  
+
+### 1. What Makes AI “Multimodal”?  
+A multimodal system accepts more than one input channel:
+
+- Text (commands, questions)  
+- Speech (voice)  
+- Images (camera frames)  
+- Video (continuous scene)  
+- Touch or force sensors (physical interaction)  
+
+Robots like Figure 01, GR00T, and Optimus rely heavily on multimodality.
+
+### 2. Vision-Language Models (VLMs)  
+VLMs such as:
+
+- GPT-4o  
+- GR00T  
+- Gemini  
+- LLaVA  
+
+These models can:
+
+- Identify objects  
+- Understand scenes  
+- Follow instructions grounded in the environment  
+- Answer questions about what the robot sees  
+
+Example:  
+User: **“Pick up the cup on the right.”**  
+Robot uses the camera → identifies the cup → confirms → performs action.
+
+### 3. Speech Understanding  
+Speech systems involve:
+
+- **ASR (Automatic Speech Recognition)** → Converts speech → text  
+- **LLM reasoning** → Understands the instruction  
+- **Dialogue manager** → Decides next action  
+
+This makes talking to a robot feel natural.
+
+### 4. Gesture + Body-Language Interpretation  
+Advanced humanoids also track:
+
+- Hand pointing  
+- Nodding  
+- Head direction  
+- Human posture  
+
+Example:  
+A user silently points at an object, and the robot recognizes it as a reference.
+
+### 5. Action Grounding  
+Multimodal AI must connect language to physical actions.
+
+Example:  
+“Put the red book on the second shelf.”  
+
+Robot must:
+
+1. Detect the book (vision)  
+2. Understand location (spatial reasoning)  
+3. Plan motion (locomotion + actuation)  
+4. Execute safely  
+
+### 6. Continuous Perception  
+Unlike software chatbots, robots cannot “forget” what’s happening:
+
+- People move  
+- Objects fall  
+- The environment changes  
+
+Multimodal models monitor the scene in real time and update decisions accordingly.
+
+## Example  
+User: **“Hand me the tool that looks like this.”**  
+(Shows an image on their phone.)
+
+Robot:
+
+- Analyzes image  
+- Searches scene for similar object  
+- Locates tool  
+- Asks:  
+  **“Do you mean the metal wrench on the table?”**  
+- Executes action upon confirmation  
+
+## Real-World Application  
+- **NVIDIA GR00T**: multimodal foundation model for robotics  
+- **OpenAI’s Vision-Language robotics**  
+- **Figure 01**: uses multimodal perception for home tasks  
+- **Warehouse robots** detecting packages and labels  
+- **Service humanoids** interacting with users  
+
+## Summary  
+- Multimodal AI lets robots understand voice, vision, gestures, and context.  
+- VLMs power the robot’s ability to see and reason about the world.  
+- Speech understanding enables natural communication.  
+- Grounding links language → real-world robot actions.  
+- Essential for natural, intelligent humanoid interaction.
+
+---
+
+<ChapterActions docId="conversational/conversational-multimodal-ai" />

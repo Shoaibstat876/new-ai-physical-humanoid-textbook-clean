@@ -1,0 +1,136 @@
+---
+id: ros2-services-actions
+title: ROS2 Services & Actions
+sidebar_label: Services & Actions
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# ROS2 Services & Actions
+
+## Overview
+ROS2 communication is not just about continuous data streams.  
+Some tasks require a **request and response**, while others require **long-running operations with feedback**.  
+ROS2 solves these needs using **Services** and **Actions**, two communication patterns essential for real-world robots.
+
+---
+
+## Key Concepts
+- **Service** — One request, one response; similar to a function call.  
+- **Action** — A long-running task that provides feedback and a final result.  
+- **Service Client** — The requester.  
+- **Service Server** — The processor.  
+- **Action Feedback** — Progress updates while executing a task.
+
+---
+
+## Detailed Explanation
+
+### Services — Instant Request–Response  
+A Service is used when a robot needs to:
+
+- ask a question  
+- compute a result  
+- receive a reply immediately  
+
+A Service has:
+
+- a **Request**  
+- a **Response**  
+- a **Service name**
+
+Good for tasks like:
+
+- getting robot status  
+- changing modes  
+- requesting a computation  
+- querying a sensor reading  
+
+### Actions — Long-Running Tasks  
+Actions are used for tasks that take time and must provide periodic updates.  
+An Action includes:
+
+- **Goal** — start the task  
+- **Feedback** — progress messages  
+- **Result** — final outcome  
+
+Actions are essential for tasks like:
+
+- walking to a target  
+- running a grasping sequence  
+- executing a navigation plan  
+- charging or docking  
+- scanning an area  
+
+Actions can be **canceled**, which is critical for safety.
+
+### Why This Matters for Humanoids
+Humanoids use many simultaneous actions:
+
+- arm movement planning  
+- whole-body balance adjustments  
+- walking trajectories  
+- object manipulation  
+- recovery reflexes  
+
+Each action is asynchronous and interruptible — exactly what a humanoid robot needs in a dynamic environment.
+
+---
+
+## Example: Simple ROS2 Service
+
+**Service definition (`AddTwoInts.srv`):**
+int64 a
+int64 b
+
+int64 sum
+
+
+**Calling the service:**
+```bash
+ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts "{a: 3, b: 9}"
+
+Example: Simple ROS2 Action
+
+Send a goal to the Fibonacci action server:
+ros2 action send_goal /fibonacci example_interfaces/action/Fibonacci "{order: 6}"
+
+You will see:
+
+feedback printed repeatedly
+
+a final computed result
+
+Real-World Application
+
+Humanoid and industrial robots use Services & Actions constantly:
+
+Services:
+
+request object classification
+
+read robot mode
+
+reset controllers
+
+Actions:
+
+navigation goals
+
+arm motion planning
+
+manipulation sequences
+
+locomotion and footstep planning
+
+Companies like NVIDIA, Open Robotics, Agility Robotics, and Figure AI rely heavily on Actions for safe, predictable robot behavior.
+
+Summary
+
+Services handle instant request–response communication.
+
+Actions manage long-running, interruptible tasks with feedback.
+
+Together, they enable dynamic, robust, and safe humanoid robot behavior.
+
+<ChapterActions docId="ros2/ros2-services-actions" /> ```

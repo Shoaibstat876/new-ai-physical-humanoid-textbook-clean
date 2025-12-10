@@ -1,0 +1,173 @@
+---
+id: conversational-safety
+title: Safety, Ambiguity & Human-in-the-Loop Interaction
+sidebar_label: Safety & Human-Loop
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Safety, Ambiguity & Human-in-the-Loop Interaction
+
+## Overview  
+Humanoid robots and conversational systems must operate safely in dynamic, unpredictable human environments. Unlike traditional software chatbots, a robot’s mistake can cause **physical harm**, property damage, or user frustration.  
+This chapter explains safety layers, handling ambiguous instructions, and when a robot must involve a **human-in-the-loop** to prevent errors.
+
+## Key Concepts  
+- **Instruction Ambiguity** — When the robot cannot determine user intent.  
+- **Action Confirmation** — Robot verifies decisions before executing.  
+- **Safety Boundaries** — Limits on force, speed, space, or allowed actions.  
+- **Human-in-the-Loop (HITL)** — Robot requests help when unsure.  
+- **Fail-Safe Behaviors** — Stopping, asking again, or refusing dangerous actions.
+
+---
+
+## Detailed Explanation  
+
+### 1. Why Safety Matters  
+A chatbot giving a wrong answer is harmless.  
+A humanoid robot performing the wrong **physical action** is not.
+
+Examples of unsafe outcomes:
+
+- Misinterpreting “Grab the bottle” and picking a **glass vase**  
+- Walking too close to a child  
+- Lifting an object heavier than its torque limits  
+- Acting without confirming unclear instructions  
+
+Because of real-world risk, conversational AI must always prioritize:
+
+✔ Caution  
+✔ Clarification  
+✔ Human verification
+
+---
+
+### 2. Handling Ambiguous Instructions  
+Humans frequently give incomplete or unclear commands:
+
+- “Take that thing over there.”  
+- “Put it where it belongs.”  
+- “Fix this.”  
+
+Robots must detect ambiguity using:
+
+- Language checks (“that thing” = unclear)  
+- Vision checks (multiple objects match)  
+- Context checks (missing task constraints)
+
+When uncertain, the robot responds:
+
+> “I am not sure which object you mean. Can you point to it or describe it?”
+
+This prevents catastrophic mistakes.
+
+---
+
+### 3. Confirmation Before Actions  
+Before executing **any physical movement**, robots should confirm intent.
+
+Example:
+
+User: “Put the box on the shelf.”
+
+Robot:
+
+> “Do you want me to place the brown cardboard box on the top shelf?”
+
+Action confirmation is essential for tasks involving:
+
+- Sharp tools  
+- Heavy objects  
+- Humans in close range  
+- Unstable surfaces
+
+Robots must never assume.  
+They **ask → confirm → act**.
+
+---
+
+### 4. Human-in-the-Loop (HITL)  
+Some tasks exceed the robot’s confidence or capabilities:
+
+- Conflicting commands  
+- Unsafe environments  
+- Low visibility  
+- Failures in sensors  
+- Emotionally sensitive situations
+
+In HITL mode, robots escalate:
+
+> “I cannot safely complete this task. Should I proceed, skip, or ask another human?”
+
+The robot pauses until a human approves or clarifies.
+
+---
+
+### 5. Fail-Safe Behaviors  
+When something is too risky, the safest action is **doing nothing**.
+
+Common fail-safe strategies:
+
+- Stop movement completely  
+- Lower speed or force  
+- Recalibrate sensors  
+- Re-ask the question  
+- Decline the request politely
+
+Example:
+
+> “I’m sorry, this action may not be safe. I cannot lift this object.”
+
+Fail-safes build trust and prevent accidents.
+
+---
+
+## Example  
+Scenario: User says, “Bring me the cup.”
+
+The robot sees:
+
+- A white mug  
+- A red plastic cup  
+- A metal measuring cup
+
+The robot asks:
+
+> “I see three cups. Which one do you want?”
+
+User points to the white mug.
+
+Robot responds:
+
+> “Understood. Bringing the white mug.”
+
+This behavior is essential in homes, warehouses, classrooms, and hospitals.
+
+---
+
+## Real-World Applications  
+- **NVIDIA GR00T**: Safety-aware action prediction  
+- **Figure 01**: Confirmations before manipulation  
+- **Boston Dynamics Atlas**: Safety stop mechanisms  
+- **Tesla Optimus**: Avoids unbounded human contact  
+- **Industrial cobots**: Built-in force and proximity limits
+
+These systems share the same principles:  
+⚠️ Avoid unsafe actions  
+⚠️ Clarify ambiguous instructions  
+⚠️ Keep a human in the loop when needed
+
+---
+
+## Summary  
+- Conversational AI for robots must be safety-first.  
+- Robots detect ambiguity and ask for clarification.  
+- Confirmation before actions prevents accidents.  
+- Human-in-the-loop systems intervene when robots are unsure.  
+- Fail-safe behaviors protect people, robots, and the environment.
+
+Robots that communicate safely become trustworthy teammates in real-world environments.
+
+---
+
+<ChapterActions docId="conversational/conversational-safety" />

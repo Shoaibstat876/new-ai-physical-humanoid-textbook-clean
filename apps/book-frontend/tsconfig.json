@@ -1,0 +1,12 @@
+{
+  // This file is not used in compilation. It is only for editor experience.
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0"
+  },
+  "exclude": [
+    ".docusaurus",
+    "build"
+  ]
+}

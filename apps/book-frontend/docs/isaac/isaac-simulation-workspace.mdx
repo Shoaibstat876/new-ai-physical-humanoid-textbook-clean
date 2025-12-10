@@ -1,0 +1,86 @@
+---
+id: isaac-simulation-workspace
+title: Understanding the Isaac Sim Workspace
+sidebar_label: The Workspace
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Understanding the Isaac Sim Workspace
+
+## Overview
+The Isaac Sim workspace is your main environment for building, viewing, editing, and testing robot scenes.  
+It includes tools for managing objects, adjusting physics settings, creating digital twins, and controlling simulations in real time.  
+A strong understanding of the interface allows you to rapidly prototype humanoid behaviors and environments without touching physical hardware.
+
+---
+
+## Key Concepts
+
+- **Stage (USD Scene)** — The main 3D world containing robots, lights, cameras, and assets.  
+- **Viewport** — The visual window where you see the simulation.  
+- **Stage Tree / Scene Graph** — A hierarchical list of all objects, components, and assets.  
+- **Property Panel** — Shows editable settings for selected objects (e.g., position, mass, friction).  
+- **Simulation Timeline** — Controls play, pause, and stepping of physics simulations.
+
+---
+
+## Detailed Explanation
+
+The **Stage** is the heart of Isaac Sim.  
+Everything you build—humanoids, rooms, furniture, sensors—lives inside a USD scene. The stage supports layers, meaning you can load environments, robots, and objects separately, then modify them non-destructively.
+
+The **Viewport** lets you visually inspect your simulation. You can change camera angles, adjust lighting, and debug robot motion. High-performance RTX rendering makes the simulation photorealistic, which is essential when training AI models for computer vision or manipulation tasks.
+
+The **Stage Tree** provides a complete breakdown of objects in your environment. Humanoid robots typically have dozens of articulation components (joints, links, sensors). With the scene graph, you can expand and inspect their structure easily.
+
+The **Property Panel** is where most editing happens. Here you can modify physics values like mass, friction, damping, or collision properties. For humanoid robots, fine-tuning joint parameters is crucial to achieving realistic walking, balancing, and manipulation.
+
+Lastly, the **Simulation Timeline** controls the execution of physics.  
+You can:
+
+- Play the simulation  
+- Pause  
+- Step frame-by-frame  
+- Reset to initial state  
+
+This control is essential for debugging dynamic behaviors, especially when humanoids fall, collide, or lose balance.
+
+---
+
+## Example
+
+A simple workflow inside Isaac Sim workspace:
+
+1. Load a humanoid robot USD file.  
+2. Inspect its joints and links in the Stage Tree.  
+3. Adjust the robot’s starting pose using the Property Panel.  
+4. Add a table and a cube to the environment.  
+5. Click **Play** to run physics.  
+6. Watch how the robot interacts with the object.  
+7. Pause and fine-tune mass or friction to improve realism.  
+
+This iterative loop allows you to rapidly experiment with behavior and environment design.
+
+---
+
+## Real-World Application
+
+- **Humanoid companies** use the workspace to validate balance, locomotion, and manipulation before touching real robots.  
+- **Research labs** build complex indoor scenes to simulate domestic tasks.  
+- **Industrial teams** prototype robotic workflows like stacking, sorting, or assembly.  
+- **AI teams** generate high-quality synthetic data for training computer vision models.  
+
+Mastering the interface means faster, safer, lower-cost robotics development.
+
+---
+
+## Summary
+
+- Isaac Sim’s workspace includes the Stage, Viewport, Scene Graph, Property Panel, and Simulation Timeline.  
+- It supports world-building, robot inspection, parameter tuning, and real-time simulation control.  
+- Understanding this layout dramatically speeds up humanoid development.  
+- The workspace forms the foundation for all higher-level simulation tasks in robotics.
+
+---
+
+<ChapterActions docId="isaac-sim/isaac-simulation-workspace" />

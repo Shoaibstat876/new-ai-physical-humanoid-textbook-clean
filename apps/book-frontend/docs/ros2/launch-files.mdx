@@ -1,0 +1,162 @@
+---
+id: ros2-launch-files
+title: ROS2 Launch Files
+sidebar_label: Launch Files
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# ROS2 Launch Files
+
+## Overview
+As robots grow more complex, they require many nodes to run simultaneously.  
+Manually starting each node is inefficient and error-prone.  
+ROS2 solves this using **launch files** — Python scripts that define:
+
+- which nodes to start  
+- what parameters to load  
+- how the robot system should boot  
+
+Launch files provide structure, automation, and scalability for real humanoid robots.
+
+---
+
+## Key Concepts
+
+- **Launch File** — A Python script that starts multiple ROS2 nodes together.  
+- **Node Action** — A command inside a launch file describing which node to run.  
+- **Parameters** — Configuration values passed to nodes at startup.  
+- **Launch Arguments** — Variables you can pass when running the launch file.  
+- **Composability** — Ability to combine multiple launch files into a larger system.  
+
+---
+
+## Detailed Explanation
+
+A humanoid robot rarely runs a single node.  
+It may require **20+ nodes**, such as:
+
+- IMU drivers  
+- Camera pipelines  
+- Motor controllers  
+- Whole-body control  
+- Localization  
+- Mapping  
+- Planning  
+
+Starting these manually is unrealistic in real deployments.
+
+### What Is a Launch File?
+
+A launch file typically lives inside:
+
+my_robot/launch/start_robot.py
+
+It uses ROS2’s Launch API to:
+
+- start nodes  
+- set parameters  
+- create namespaces  
+- include other launch files  
+
+---
+
+### Why Launch Files Matter
+
+Launch files provide:
+
+- repeatable robot startup  
+- automated configuration  
+- scalable system boot processes  
+
+Instead of typing 10–30 commands, you run:
+
+ros2 launch my_robot start_robot.py
+
+---
+
+## Conditional Logic
+
+Launch files can behave differently depending on arguments:
+
+- **simulation mode** → load Gazebo, fake sensors  
+- **hardware mode** → start real motor drivers, camera pipelines  
+
+---
+
+## Launch Arguments
+
+Arguments allow runtime customization:
+
+ros2 launch my_robot start_robot.py robot_model:=humanoid_v2 debug:=true
+
+No code changes required.
+
+---
+
+## Example — Simple Launch File
+
+A launch file that starts two nodes:
+
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='demo_nodes_cpp',
+            executable='listener',
+            name='my_listener'
+        ),
+        Node(
+            package='demo_nodes_cpp',
+            executable='talker',
+            name='my_talker'
+        )
+    ])
+
+### Running it:
+
+ros2 launch my_package simple_launch.py
+
+---
+
+## Real-World Application
+
+Humanoid robots depend heavily on launch files.
+
+### Startup Launch  
+Starts:
+
+- IMU  
+- joint-state publishers  
+- motor drivers  
+- robot_state_publisher  
+
+### Perception Launch  
+Starts:
+
+- camera drivers  
+- depth pipelines  
+- vision AI nodes  
+
+### Navigation Launch  
+Starts:
+
+- SLAM  
+- local + global planners  
+- costmaps  
+
+Companies like **Boston Dynamics**, **Agility Robotics**, **Figure AI**, and **Open Robotics** coordinate their entire humanoid boot processes using launch files.
+
+---
+
+## Summary
+
+- Launch files automate multi-node ROS2 systems.  
+- They support parameters, arguments, and composability.  
+- They are essential for humanoids with complex AI + control stacks.  
+- With one command, the entire robot becomes operational.
+
+---
+
+<ChapterActions docId="ros2/ros2-launch-files" />

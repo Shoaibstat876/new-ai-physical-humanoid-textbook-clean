@@ -1,0 +1,188 @@
+---
+id: humanoid-design-kinematics
+title: Humanoid Design & Kinematics
+sidebar_label: Humanoid Design
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Design & Kinematics
+
+## Overview
+Humanoid robots are built to move, balance, and interact in the same environments as humans. Their design is not random—every joint, limb, and actuator supports specific movements needed for locomotion, manipulation, and stability. This chapter explains the foundational principles of humanoid structure and the kinematics (geometry of motion) that determine how robots position and move their limbs with precision.
+
+---
+
+## Key Concepts
+- **Humanoid Morphology** — Why robots have human-like limbs and proportions.  
+- **Degrees of Freedom (DoF)** — The number of independent movements a joint can make.  
+- **Forward Kinematics (FK)** — Compute end-effector position from given joint angles.  
+- **Inverse Kinematics (IK)** — Compute joint angles needed to reach a target position.  
+- **Kinematic Chains** — How joints link together to form limbs and full bodies.  
+
+---
+
+## Detailed Explanation
+
+### 1. Why Humanoid Form Matters
+Humans designed buildings, tools, and daily environments around our bodies.  
+A humanoid robot can:
+
+- Climb stairs  
+- Open doors  
+- Operate tools  
+- Move through narrow spaces  
+- Interact with humans naturally  
+
+This compatibility gives humanoids a major advantage over wheeled or animal-shaped robots.
+
+---
+
+### 2. Degrees of Freedom (DoF)
+Each joint in a robot provides **one or more axes of motion**.
+
+Examples:
+
+- Shoulder: 3 DoF (pitch, roll, yaw)  
+- Elbow: 1 DoF (flex/extend)  
+- Wrist: 2–3 DoF  
+- Hip: 3 DoF  
+- Ankle: 2 DoF  
+
+Total DoF in humanoids often ranges from **28 to 40+**, allowing complex motion.
+
+More DoF means:
+
+- Better dexterity  
+- Smoother motion  
+- More human-like gestures  
+
+But also:
+
+- Harder control  
+- More compute  
+- More chance of collisions  
+
+---
+
+### 3. Kinematic Chains
+A **kinematic chain** is a sequence of joints and links.
+
+For example, the arm chain:
+
+`Shoulder → Upper Arm → Elbow → Forearm → Wrist → Hand`
+
+Robots must compute:
+
+- Reachability  
+- Stability  
+- Collisions  
+- Optimal motion paths  
+
+Kinematic chains also include the **legs**, **torso**, and **neck**.
+
+---
+
+### 4. Forward Kinematics (FK)
+FK answers the question:
+
+👉 *“If I know all joint angles, where is the robot’s hand?”*
+
+Given joint angles, FK calculates:
+
+- End-effector position (x, y, z)
+- Orientation (roll, pitch, yaw)
+
+FK is essential for:
+
+- Visualizing posture  
+- Simulating motions  
+- Checking reachable areas  
+
+FK is mathematically straightforward and fast.
+
+---
+
+### 5. Inverse Kinematics (IK)
+IK answers the opposite question:
+
+👉 *“What joint angles will put the robot’s hand at this exact point?”*
+
+IK is more complex because:
+
+- Many solutions may exist  
+- Sometimes no solution exists  
+- Joint limits matter  
+- Avoiding collisions matters  
+- The robot must maintain balance  
+
+Humanoid robots often use **numerical IK**, computing solutions iteratively.
+
+IK is used for:
+
+- Grasping objects  
+- Touching a specific location  
+- Writing or drawing  
+- Adjusting posture for balance  
+
+---
+
+### 6. Whole-Body Kinematics
+Beyond single limbs, humanoids must coordinate:
+
+- Torso motion  
+- Arm motion  
+- Leg motion  
+- Center of Mass (CoM)  
+- Foot placement  
+
+Whole-body kinematics ensures:
+
+- Safe walking  
+- Balance on one foot  
+- Lifting heavy objects  
+- Smooth gestures while standing  
+
+It is the bridge between structure and dynamic control.
+
+---
+
+## Example
+
+A humanoid robot must press a button on a wall.
+
+To do this:
+
+1. IK computes the arm joint angles needed to reach the button.  
+2. FK verifies the hand remains oriented correctly.  
+3. Whole-body kinematics shifts weight to keep the robot stable.  
+4. The wrist aligns itself to apply light, controlled force.  
+5. The controller executes the planned motion smoothly.  
+
+All this happens in milliseconds.
+
+---
+
+## Real-World Application
+Humanoid kinematics is used in:
+
+- **Factory robots** performing manipulation tasks  
+- **Logistics robots** picking packages  
+- **Healthcare robots** assisting patients  
+- **Construction robots** climbing or navigating uneven surfaces  
+- **Service robots** interacting with tools and objects  
+
+Without strong kinematic design, humanoid robots cannot function safely around humans.
+
+---
+
+## Summary
+- Humanoid shape matches human environments.  
+- Degrees of Freedom define how limbs move.  
+- Forward Kinematics calculates position from joint angles.  
+- Inverse Kinematics finds joint angles to reach a target.  
+- Whole-body kinematics ensures balance, reachability, and safe motion.  
+
+---
+
+<ChapterActions docId="foundations/humanoid-design-kinematics" />

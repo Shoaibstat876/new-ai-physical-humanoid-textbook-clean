@@ -1,0 +1,127 @@
+---
+id: conversational-dialogue-management
+title: Dialogue Management
+sidebar_label: Dialogue Management
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Dialogue Management
+
+## Overview  
+Dialogue Management is the brain of a conversational system. It decides **how the AI should respond next**, how to maintain context, how to clarify user intentions, and how to manage multi-step interactions. For humanoid robots, effective dialogue management ensures conversations feel natural, safe, and task-oriented—especially when instructions are complex or occur in real-world environments.
+
+## Key Concepts  
+- **Dialogue State** — A memory of the conversation so far.  
+- **Context Tracking** — Keeping track of user goals and previously mentioned objects.  
+- **Policy Manager** — Decides the next response or action.  
+- **Multi-Turn Reasoning** — Handling long conversations, not just single questions.  
+- **Clarification & Safety** — Asking follow-up questions to avoid mistakes in the physical world.
+
+## Detailed Explanation  
+
+### 1. Dialogue State  
+The dialogue state stores everything important from the conversation:
+
+- What the user said  
+- What the robot already did  
+- What task is still pending  
+- Which objects or persons are being referenced  
+
+Example:  
+If a user says:  
+**“Pick up the cup… no, the blue one on the left.”**  
+
+The robot must remember the previous instruction to interpret the correction.
+
+### 2. Context Tracking  
+Context helps the robot understand ongoing goals:
+
+- If earlier the user asked to “clean the table,”  
+  then “move that” probably refers to an object *on* the table.
+
+Context is a combination of:
+
+- User intent  
+- Dialogue history  
+- Scene understanding (vision + sensors)  
+- Robot’s internal task queue  
+
+### 3. Policy Manager  
+The policy manager chooses what to do next.
+
+Options include:
+
+- Execute an action  
+- Ask a clarifying question  
+- Provide an explanation  
+- Confirm the user’s request  
+- Reject unsafe commands  
+
+For humanoid robots, the policy manager follows strict safety rules, e.g.:
+
+- “Never operate near a human until distance is confirmed.”  
+- “Always clarify ambiguous objects.”  
+
+### 4. Multi-Turn Reasoning  
+Humans rarely give perfect instructions in one sentence.
+
+Robots must handle:
+
+- Corrections  
+- Extra details  
+- Interruptions  
+- Pauses  
+- Follow-up questions  
+
+Example:  
+Person: “Sort these boxes by size.”  
+Person (later): “Actually start with the small ones.”  
+
+Robot must update the task plan dynamically.
+
+### 5. Clarification & Safety  
+If an instruction is unclear or dangerous, the robot must ask questions.
+
+Examples:
+
+- “Do you mean the bottle on the shelf or on the desk?”  
+- “I see two red objects. Which one should I pick?”  
+- “The load is heavy. Should I use both arms?”  
+
+This prevents accidents and builds trust.
+
+## Example  
+User: **“Robot, move the chair next to that table.”**  
+Robot (vision detects multiple tables):  
+**“I see two tables. Do you mean the wooden one or the metal one?”**  
+User: “The wooden one.”  
+Robot:  
+**“Confirmed. Moving the chair now.”**  
+
+Here, the robot:
+
+1. Stored context  
+2. Detected ambiguity  
+3. Asked for clarification  
+4. Updated the dialogue state  
+5. Executed safely  
+
+This is real-world dialogue management.
+
+## Real-World Application  
+- **NVIDIA GR00T + multimodal models**: interpret continuous human commands.  
+- **OpenAI Vision-Language robots**: dynamically adjust tasks using clarifying dialogue.  
+- **Customer service bots**: maintain long conversations across dozens of turns.  
+- **Healthcare humanoids**: confirm medication or task instructions for safety.
+
+## Summary  
+- Dialogue Management decides the robot’s next action.  
+- Maintains context, tracks goals, and handles multi-turn dialogue.  
+- Policy manager ensures safe and intelligent responses.  
+- Clarification prevents mistakes in physical tasks.  
+- Essential for natural, trustworthy humanoid-robot interactions.
+
+---
+
+<ChapterActions docId="conversational/conversational-dialogue-management" />

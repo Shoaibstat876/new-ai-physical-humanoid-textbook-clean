@@ -1,0 +1,138 @@
+---
+id: ros2-parameters
+title: ROS2 Parameters & Dynamic Configuration
+sidebar_label: Parameters
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# ROS2 Parameters & Dynamic Configuration
+
+## Overview
+Robots must adapt their behavior while running—change speeds, update sensor thresholds,  
+or modify behaviors without rebooting. ROS2 provides **Parameters**, a built-in system that  
+allows nodes to store, retrieve, and update configuration values dynamically. Humanoid  
+robots rely heavily on parameters to fine-tune motion, perception, stability, and power  
+usage in real time.
+
+---
+
+## Key Concepts
+- **Parameter** — A named value stored inside a node (e.g., `"max_speed"`, `"sensor_gain"`).  
+- **Parameter Types** — Integer, float, string, boolean, arrays.  
+- **Parameter Server (Node)** — Any ROS2 node that declares and manages parameters.  
+- **Dynamic Reconfiguration** — Changing parameters while the robot is running.  
+- **Lifecycle Nodes** — Nodes that load default parameters during initialization.  
+
+---
+
+## Detailed Explanation
+
+### What Are Parameters?
+Parameters are persistent values that configure how a ROS2 node behaves.  
+Unlike topics (data streams) or services (request–response), parameters act like *settings* inside the robot.
+
+Examples include:
+
+- Maximum walking speed  
+- Minimum obstacle detection distance  
+- Camera exposure level  
+- PID control gains  
+
+These values stay constant until changed, and can survive node restarts when saved in YAML.
+
+---
+
+### Declaring Parameters
+Nodes explicitly declare parameters to avoid errors and create predictable behavior.
+
+```python
+self.declare_parameter("max_speed", 1.0)
+
+Reading the value:
+speed = self.get_parameter("max_speed").value
+
+Dynamic Reconfiguration
+
+ROS2 allows updating parameters while the robot is running, which is essential for:
+
+Live balance tuning
+
+Adjusting navigation thresholds
+
+Changing grip force
+
+Switching camera modes
+
+Example:
+ros2 param set /robot_controller max_speed 0.5
+
+Parameter Events
+
+A node can listen for events when:
+
+A parameter changes
+
+A parameter is created
+
+A parameter is deleted
+
+This helps humanoids adapt to real-time updates, such as changing footstep stride.
+
+Parameter Files (YAML)
+
+Robots use YAML files to load parameters at startup:
+
+robot_controller:
+  ros__parameters:
+    max_speed: 0.7
+    balance_gain: 1.2
+    camera_mode: "low_light"
+
+This ensures repeatability, stability, and version control.
+
+Example Commands
+Set a parameter
+ros2 param set /camera_node exposure 120
+
+Get a parameter
+ros2 param get /camera_node exposure
+
+List all parameters
+ros2 param list
+
+Parameter change callback
+def callback(self, params):
+    for p in params:
+        if p.name == 'max_speed':
+            self.current_speed = p.value
+    return SetParametersResult(successful=True)
+
+Real-World Application
+
+Humanoid robots depend on dynamic parameters for:
+
+Live balance PID tuning
+
+Updating walking gait without restarting
+
+Switching between day/night camera modes
+
+Adjusting grip force during manipulation
+
+Optimizing battery usage in long missions
+
+Companies like Boston Dynamics, Figure AI, and Tesla Optimus use dynamic reconfiguration throughout their development cycles.
+
+Summary
+
+ROS2 Parameters allow instant updates to robot behavior.
+
+They support dynamic changes during runtime.
+
+YAML files provide stable and repeatable startup configuration.
+
+Parameters are essential for humanoid locomotion, manipulation, perception, and safety.
+
+<ChapterActions docId="ros2/ros2-parameters" /> ```
+

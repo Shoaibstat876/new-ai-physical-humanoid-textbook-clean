@@ -1,0 +1,89 @@
+---
+id: conversational-ai-introduction
+title: Introduction to Conversational AI for Robotics
+sidebar_label: Conversational AI — Intro
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Introduction to Conversational AI for Robotics
+
+## Overview  
+Conversational AI is the layer that enables robots to communicate using natural language. While classical robotics focuses on motion, sensing, and control, modern humanoids must also *understand*, *interpret*, and *respond* to human instructions. This chapter introduces how language models, perception, and dialogue systems combine to make robots socially aware and task-capable in real-world environments.
+
+## Key Concepts
+- **Natural Language Understanding (NLU)** — How a robot interprets human intent.
+- **Dialogue Management** — How a system decides what to say or do next.
+- **Grounding** — Connecting language to the physical world (“pick up that cup” → detect the cup).
+- **Embodied Language Models** — AI models trained with sensorimotor context.
+- **Task Planning from Language** — Converting commands into executable robot actions.
+
+## Detailed Explanation
+
+### 1. Why Conversational AI Matters in Robotics  
+Humans communicate naturally with words, gestures, and tone. Robots designed for homes, schools, hospitals, and workplaces must participate in this communication. Conversational AI enables robots to understand instructions without requiring complicated menus or apps. Instead, a person can simply say:  
+**“Robot, help me clean the table.”**
+
+### 2. From Language to Action  
+Understanding words is not enough—robots must map language to physical behavior. This includes:  
+- Parsing verbs (“pick,” “move,” “scan”)  
+- Identifying objects in the environment  
+- Understanding context (“the red cup near the sink”)  
+- Selecting feasible actions based on kinematics and control  
+
+A conversational robot converts a spoken sentence into a structured action plan.
+
+### 3. Embodied Knowledge in Language Models  
+Modern AI models like GPT, Claude, and Gemini are gaining the ability to incorporate physical-world reasoning. When paired with a robot, a conversational agent must understand not only *what the user wants* but also *what the robot can physically do*. This requires integrating:  
+- Vision models  
+- Control APIs  
+- Simulation knowledge  
+- Safety constraints  
+
+### 4. Multi-Step Dialogues  
+Robots often require clarification:  
+- “Do you mean the blue box or the green box?”  
+- “Should I place it on the table or inside the cabinet?”  
+
+Dialogue management ensures safe, efficient interactions and reduces mistakes.
+
+### 5. Safety & Ethical Considerations  
+Conversational robots must avoid harmful or ambiguous actions. They need built-in safeguards such as:  
+- Rejecting unsafe requests  
+- Avoiding actions without proper grounding  
+- Asking clarifying questions  
+
+These principles matter deeply when robots operate around children, elderly individuals, and in crowded spaces.
+
+## Example  
+Imagine a service humanoid in a classroom. A teacher says:
+
+**“Robot, hand out the worksheets.”**
+
+The robot must:  
+1. Detect the stack of papers  
+2. Identify students  
+3. Plan a safe navigation path  
+4. Hand papers individually  
+5. Respond verbally during the process  
+
+Conversational AI connects the teacher’s request to real motor behavior.
+
+## Real-World Application  
+- **NVIDIA GR00T + Project GR00T** — Training large multimodal models for humanoids.  
+- **Tesla Optimus** — Uses language-conditioned tasks for factory automation.  
+- **Sanctuary AI Phoenix** — Operates in real retail environments with dialogue-based commands.  
+- **Classroom Assistants** — Robots that explain lessons, assist teachers, or help students.
+
+Conversational AI is the *bridge* between human intention and robotic capability.
+
+## Summary  
+- Conversational AI allows robots to understand and respond to natural language.  
+- It transforms verbal instructions into grounded actions.  
+- Embodied language models make robots more aware of physical context.  
+- Dialogue management ensures safe, clear interactions.  
+- This chapter lays the foundation for building humanoids that communicate naturally.
+
+---
+
+<ChapterActions docId="conversational/conversational-ai-introduction" />

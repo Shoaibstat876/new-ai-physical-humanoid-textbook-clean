@@ -1,0 +1,160 @@
+---
+id: training-in-simulation
+title: Training in Simulation (RL & Imitation Learning)
+sidebar_label: Training in Simulation
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Training in Simulation (RL & Imitation Learning)
+
+## Overview
+Training robots in simulation allows them to learn skills safely, quickly, and cheaply before ever touching real hardware.  
+Modern simulators such as **NVIDIA Isaac Sim**, **MuJoCo**, and **Gazebo** allow robots to experience millions of practice episodes in minutes.  
+
+This chapter explains how robots learn through **Reinforcement Learning (RL)** and **Imitation Learning (IL)** inside simulation environments.
+
+---
+
+## Key Concepts
+- **Reinforcement Learning (RL)** — robots learn through rewards and trial-and-error.  
+- **Imitation Learning (IL)** — robots learn by copying expert demonstrations.  
+- **Domain Randomization** — adding variation to simulation for real-world robustness.  
+- **Curriculum Learning** — gradually increasing task difficulty.  
+- **Sim-to-Real Gap** — the difference between simulation behavior and real-world results.
+
+---
+
+## Detailed Explanation
+
+### 1. Reinforcement Learning (RL)
+In RL, a robot interacts with a simulated environment step-by-step:
+
+1. It observes the state  
+2. Chooses an action  
+3. Receives a reward  
+4. Improves its policy  
+
+Over thousands or millions of episodes, the robot discovers the best behavior.
+
+Example:  
+A quadruped robot learns to walk by rewarding forward motion and penalizing falling.
+
+Common RL frameworks used in Isaac Sim:
+
+- **RL-Games**  
+- **RSL-RL**  
+- **PPO (Proximal Policy Optimization)**  
+- **SAC (Soft Actor Critic)**  
+
+---
+
+### 2. Imitation Learning (IL)
+IL teaches robots by example. Instead of exploring randomly, the robot copies expert behavior:
+
+- teleoperation recordings  
+- human motion-capture  
+- joystick demonstrations  
+- previously learned robot trajectories  
+
+IL is widely used to train:
+
+- manipulation  
+- basic locomotion  
+- humanoid actions such as standing, lifting, or opening doors  
+
+---
+
+### 3. Domain Randomization
+Training only in a “perfect” simulation creates weak real-world performance.  
+Domain Randomization fixes this by adding randomness:
+
+- friction changes  
+- lighting variation  
+- random object positions  
+- sensor noise  
+- mass & material variations  
+
+This makes policies **robust** and transferable.
+
+---
+
+### 4. Curriculum Learning
+Robots learn faster when trained progressively, like students:
+
+1. Start with easy tasks  
+2. Increase difficulty  
+3. Add disturbances  
+
+Example curriculum:
+
+- Level 1: stable ground →  
+- Level 2: light pushes →  
+- Level 3: slippery surfaces →  
+- Level 4: moving obstacles  
+
+This leads to smoother and safer learning.
+
+---
+
+### 5. The Sim-to-Real Gap
+Simulators cannot perfectly match real physics.  
+The **sim-to-real gap** is reduced using:
+
+- domain randomization  
+- accurate sensor models  
+- calibrated physics parameters  
+- real-world fine-tuning  
+
+These techniques ensure trained policies work reliably on physical robots.
+
+---
+
+## Example  
+### Training a Humanoid Balance Policy in Isaac Sim
+
+Simulation includes:
+
+- random ground friction  
+- small push forces  
+- IMU and foot sensor noise  
+
+Rewards and penalties:
+
+- **Reward:** staying upright  
+- **Penalty:** falling or unstable posture  
+
+After ~20,000 episodes, the humanoid learns to:
+
+- shift weight  
+- correct posture  
+- widen stance  
+- maintain balance under disturbances  
+
+This trained policy can then be deployed onto a real humanoid robot.
+
+---
+
+## Real-World Application
+
+Simulation-based training is used for:
+
+- humanoids learning to walk or climb stairs  
+- warehouse robots navigating aisles  
+- robotic arms learning grasping and sorting  
+- drones practicing coordinated flight  
+- autonomous vehicles learning rare or dangerous scenarios  
+
+Robots train **millions of times faster** in simulation than in real life.
+
+---
+
+## Summary
+- RL and IL allow robots to learn safely and quickly.  
+- Domain Randomization ensures robustness in the real world.  
+- Curriculum Learning builds skills progressively.  
+- Simulation accelerates development and reduces risk for humanoid robots.
+
+---
+
+<ChapterActions docId="training/training-in-simulation" />

@@ -1,0 +1,355 @@
+/* ===========================
+   OUTER CARD
+   =========================== */
+
+.container {
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, #f5f7fb 0%, #f9fafb 40%, #eef2ff 100%);
+  border: 1px solid #e1e5f2;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    border-color 0.2s ease;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.container:hover {
+  transform: translateY(-1px);
+  border-color: #d4d4ff;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.09);
+}
+
+/* If some code still uses .wrapper */
+.wrapper {
+  composes: container;
+}
+
+/* ===========================
+   HEADER: TITLE + BADGE
+   =========================== */
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.title {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #111827;
+  margin: 0;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4b5563;
+  background: rgba(249, 250, 251, 0.9);
+  border-radius: 999px;
+  padding: 0.15rem 0.65rem;
+  border: 1px solid #e5e7eb;
+}
+
+/* Optional compact label style (older version) */
+.label {
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: #111827;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+/* ===========================
+   TABS (Ask / Urdu / Manual / Auto)
+   =========================== */
+
+.tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(239, 246, 255, 0.9);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 0.75rem;
+}
+
+.tab,
+.tabActive {
+  border: none;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #111827;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: #e5e7eb;
+}
+
+.tabActive {
+  background: #2563eb;
+  color: #f9fafb;
+  box-shadow: 0 0 0 1px rgba(191, 219, 254, 0.9),
+    0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+.tab:focus-visible,
+.tabActive:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* ===========================
+   PANELS
+   =========================== */
+
+.panel {
+  margin-top: 0.35rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.helperText {
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 0.6rem;
+  line-height: 1.45;
+}
+
+/* subtle note for demo / explanation text */
+.subtleNote {
+  font-size: 0.85rem;
+  color: #6b7280; /* soft gray */
+  margin-bottom: 0.5rem;
+}
+
+/* ===========================
+   INPUTS (textarea + select)
+   =========================== */
+
+.textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid #d1d5db;
+  font-size: 0.82rem;
+  resize: vertical;
+  outline: none;
+  background: #ffffff;
+  color: #111827;
+  line-height: 1.45;
+}
+
+.textarea:focus-visible {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.24);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.8rem;
+  color: #374151;
+}
+
+.row label {
+  font-weight: 500;
+}
+
+.row select {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.8rem;
+  color: #111827;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.row select:focus-visible {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+
+/* ===========================
+   PRIMARY BUTTON
+   =========================== */
+
+.primaryButton {
+  margin-top: 0.4rem;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: #111827;
+  color: #f9fafb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    opacity 0.15s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 7px rgba(17, 24, 39, 0.24);
+}
+
+.primaryButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.primaryButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.primaryButton:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* ===========================
+   STATUS / ERROR / META
+   =========================== */
+
+.status {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: #4b5563;
+  line-height: 1.35;
+}
+
+.errorBox,
+.metaBox,
+.resultBox {
+  margin-top: 0.65rem;
+  border-radius: 0.7rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* Generic result box (Markdown / answers) */
+.resultBox {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: inset 0 0 0 1px rgba(249, 250, 251, 0.8);
+  color: #111827;
+}
+
+/* Meta info: user email, preferred level */
+.metaBox {
+  background: #f5f7fb;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+/* Error text */
+.errorBox {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+/* Old single-line error/success styles (still safe to use) */
+.error {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+.success {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #15803d;
+  font-weight: 500;
+}
+
+/* ===========================
+   PRE (CODE / MARKDOWN)
+   =========================== */
+
+.pre {
+  margin-top: 0.35rem;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #111827;
+}
+
+/* Scrollbar for result areas */
+.resultBox pre,
+.resultBox {
+  max-height: 420px;
+  overflow: auto;
+}
+
+.resultBox::-webkit-scrollbar,
+.resultBox pre::-webkit-scrollbar {
+  width: 6px;
+}
+
+.resultBox::-webkit-scrollbar-track,
+.resultBox pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.resultBox::-webkit-scrollbar-thumb,
+.resultBox pre::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 768px) {
+  .headerRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tabs {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

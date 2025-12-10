@@ -1,0 +1,59 @@
+---
+id: humanoid-learning
+title: Humanoid Robotics — Learning for Embodied Intelligence
+sidebar_label: Chapter 4 — Learning for Embodied Intelligence
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Robotics — Learning for Embodied Intelligence
+
+## Overview
+Humanoids must learn how to move, adapt, stabilize, grasp, and interact in unpredictable environments. Instead of hard-coding every action, modern systems rely on learning methods inspired by human development—trial-and-error, imitation, self-supervised learning, and reinforcement learning. These approaches allow robots to improve over time and perform tasks that were never explicitly programmed.
+
+## Key Concepts
+- **Reinforcement Learning (RL)** — Learning by receiving rewards for successful actions.
+- **Imitation Learning** — Learning behaviors from human demonstrations.
+- **Self-Supervised Learning (SSL)** — Learning patterns from unlabeled data such as motion, video, or tactile streams.
+- **Sim-to-Real Transfer** — Training in simulation and transferring behaviors to physical robots.
+- **Embodied Data** — Real-world sensor feedback used to refine models.
+
+## Detailed Explanation
+
+Humanoid learning focuses on enabling robots to adapt to real-world complexity. Reinforcement Learning (RL) is widely used for locomotion, where the robot explores different motions and receives rewards for staying balanced, moving efficiently, or reaching a target. Over millions of simulated steps, the robot discovers effective walking or running strategies.
+
+**Imitation Learning** reduces training time by letting robots copy human demonstrations. For example, a human teleoperates the robot to pick up a box, and the robot generalizes this pattern to similar objects or positions. Advanced models use **motion capture** or **VR control** to capture full-body demonstrations.
+
+**Self-supervised learning (SSL)** is powerful because humanoids generate huge streams of sensor data: camera frames, joint angles, force readings, and audio. SSL learns general representations without labels—just like how humans learn physical intuition before formal education.
+
+To safely train complex behaviors, humanoids often learn inside simulators (e.g., Isaac Sim, Mujoco, Gazebo). This allows billions of training iterations without damaging hardware. But simulators are never perfectly accurate, so developers use **sim-to-real transfer**, which teaches robots to adapt to differences like friction, lighting, and object variations.
+
+Finally, learning must be integrated with **whole-body control**, **vision**, and **safety systems**. For example, if a humanoid learns to climb stairs, it must still maintain balance, avoid collisions, and adjust grip forces when holding objects.
+
+## Example
+A humanoid robot is trained to fold a towel:
+
+1. Human teleoperates robot folding motion → imitation learning collects samples  
+2. Robot practices folding thousands of variations in simulation → RL improves precision  
+3. Tactile sensors provide feedback on wrinkles and folds → SSL extracts patterns  
+4. Model is transferred to the real robot → adaptation fine-tunes performance  
+5. Robot folds a towel never seen before → demonstrates generalization  
+
+This multi-stage learning pipeline mirrors human skill development.
+
+## Real-World Application
+Humanoid learning powers:
+
+- **Warehouse tasks** — lifting diverse objects, adapting to shelf heights  
+- **Service robots** — handling household items and interacting with people  
+- **Factory automation** — manipulating components with tight tolerances  
+- **Healthcare** — assisting with complex daily tasks  
+- **Search and rescue** — navigating rough terrain with minimal prior knowledge  
+
+Learning enables humanoids to operate effectively in unpredictable environments where pre-programmed rules fail.
+
+## Summary
+Learning gives humanoids the ability to adapt, improve, and generalize their skills. Through reinforcement learning, imitation, SSL, and sim-to-real transfer, robots gain embodied intelligence that grows over time—moving closer to skillful, safe, and human-compatible behavior.
+
+---
+
+<ChapterActions docId="humanoid-robotics/humanoid-learning" />

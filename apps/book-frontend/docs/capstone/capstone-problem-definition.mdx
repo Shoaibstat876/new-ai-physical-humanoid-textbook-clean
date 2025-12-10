@@ -1,0 +1,121 @@
+---
+id: capstone-problem-definition
+title: Defining the Capstone Problem
+sidebar_label: Problem Definition
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Defining the Capstone Problem
+
+## Overview
+Every successful robotics system begins with a clear, meaningful problem. In this chapter, you will learn how to define a precise problem statement for your Capstone project. A well-structured definition ensures that your design, simulation, control, and AI components all align toward one achievable goal. This is the foundation upon which your entire Capstone will be built.
+
+---
+
+## Key Concepts
+- **Problem Scope** — Define exactly what the robot must accomplish.
+- **Environment & Constraints** — Identify the physical or simulated conditions.
+- **Success Criteria** — Decide what counts as a “successful” performance.
+- **Assumptions** — Clarify what you expect from sensors, hardware, or the environment.
+- **System Boundaries** — Determine what is inside and outside your responsibility.
+
+---
+
+## Detailed Explanation
+
+### 1. Why Problem Definition Matters
+In robotics engineering, weak problem definition leads to poor system design. If you don’t clearly define the task, your sensors, algorithms, and control loops will feel disconnected. A strong problem definition helps you:
+- Choose the right tools  
+- Select meaningful data  
+- Design better control and perception systems  
+- Avoid unnecessary complexity  
+
+This step transforms your Capstone from an idea into a real engineering project.
+
+### 2. Components of a Strong Problem Statement
+A complete problem statement answers these questions:
+
+- **What is the robot supposed to do?**  
+  (Pick one meaningful behavior such as navigating, lifting, assisting, detecting, answering.)
+
+- **Where will it operate?**  
+  (Environment: classroom, office, warehouse, lab, outdoor walkway.)
+
+- **What constraints exist?**  
+  (Lighting, obstacles, battery limits, terrain, user interaction rules.)
+
+- **What information does the robot need?**  
+  (Objects, human gestures, environment mapping.)
+
+- **What counts as success?**  
+  (E.g., accuracy threshold, stable walking time, detection rate, response quality.)
+
+### 3. Writing a Clear Problem Definition
+To help you structure yours, here is a simple template:
+
+**Problem Definition Template**
+1. **Objective:**  
+   Describe the main task.
+
+2. **Environment:**  
+   Describe the simulation or real-world environment.
+
+3. **Robot Capabilities Needed:**  
+   Sensors, locomotion, control, perception, communication.
+
+4. **Assumptions:**  
+   Anything you expect to be true (e.g., stable lighting, ideal sensors, simplified physics).
+
+5. **Success Criteria:**  
+   When will you consider your Capstone successful?
+
+### 4. Example Problem Definition
+**Example: Classroom Assistance Humanoid**
+
+- **Objective:**  
+  A humanoid robot assists in a classroom by answering student questions and detecting raised hands.
+
+- **Environment:**  
+  A simulated classroom in Isaac Sim with desks, chairs, and 6–10 student avatars.
+
+- **Robot Capabilities Needed:**  
+  - Vision system for gesture recognition  
+  - Audio/LLM-based conversational module  
+  - Balancing + basic walking  
+  - ROS 2 node controlling perception and decision-making  
+
+- **Assumptions:**  
+  - Good lighting  
+  - Stable network connection  
+  - Pre-trained detection models  
+
+- **Success Criteria:**  
+  - ≥85% accuracy in hand detection  
+  - Correct answer rate ≥90% for factual questions  
+  - Robot remains stable for ≥60 seconds during interaction  
+
+This is a realistic, industry-style example of a well-formed robotics task.
+
+---
+
+## Real-World Application
+At engineering companies, problem definition is a required step before teams write a single line of code.  
+For example:
+- Tesla defines “Retrieve pickup object X in environment Y under constraint Z.”
+- Boston Dynamics defines “Maintain balance during dynamic motion.”
+- Amazon Robotics defines “Navigate warehouse aisles with specific safety constraints.”
+
+Your Capstone follows the same professional workflow.
+
+---
+
+## Summary
+- A clear problem definition is the foundation of your Capstone project.  
+- It describes what the robot must do, where it will operate, and how success is measured.  
+- This step ensures your system architecture, control, perception, and simulation choices all align.  
+- You now have the template to write your own professional-grade problem statement.
+
+---
+
+<ChapterActions docId="capstone/capstone-problem-definition" />

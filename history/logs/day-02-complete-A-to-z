@@ -1,0 +1,337 @@
+✅ DAY 01 – 2025-12-08
+New SpecKit Project Initialization + Backend Migration
+1. Project Setup
+
+Created a brand-new, clean SpecKit project at:
+D:\new-ai-physical-humanoid-textbook
+
+Initialized SpecKit Plus:
+
+specifyplus init . --ai claude --script ps
+
+
+Created initial directories:
+
+/apps
+
+/docs-project
+
+/history
+
+Added:
+
+Project Constitution
+
+Specs:
+
+system-architecture.md
+
+textbook-structure.md
+
+Notes
+
+Old project at C:\Users\Shoaib\Documents\ai-physical-humanoid-textbook will be used only as reference.
+No vibe coding. Everything follows Constitution → Specs → Plan → Tasks → Implementation.
+
+2. Backend Migration (Clean SpecKit Rewrite)
+2.1 Created new backend layout
+apps/rag-backend/app/
+    main.py
+    config.py
+    __init__.py
+    routers/
+    schemas/
+    services/
+    scripts/
+
+
+Ensured ALL folders include __init__.py (package discovery).
+
+3. Python Environment + Dependencies
+
+Commands executed:
+
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+
+
+Installed & verified:
+
+fastapi
+
+uvicorn
+
+pydantic
+
+pydantic-settings
+
+httpx
+
+qdrant-client
+
+python-dotenv
+
+openai
+
+numpy
+
+4. Config System Setup
+app/config.py
+
+Uses pydantic-settings for:
+
+openai_api_key
+
+qdrant_url, qdrant_api_key
+
+backend_allowed_origins: List[str]
+
+auth_server_url
+
+default CORS fallback to ["http://localhost:3000"]
+
+Important Fix
+
+.env had invalid JSON → fixed to:
+
+BACKEND_ALLOWED_ORIGINS=["http://localhost:3000"]
+
+5. FastAPI Backend Assembly
+app/main.py
+
+Clean CORS setup
+
+Router mount:
+
+app.include_router(chat.router)
+
+
+Root endpoint returns:
+
+backend host
+
+backend port
+
+allowed CORS origins
+
+6. Chat Router + AI Tools (Level 6 → Level 10)
+Endpoints implemented
+Endpoint	Purpose
+POST /chat	Full RAG answer
+POST /chat/ask-section	Ask-this-section tool (Level 7)
+POST /chat/translate/urdu	Full chapter Urdu translation (Level 7)
+POST /chat/personalize	Manual personalization (Level 8)
+POST /chat/personalize/auto	Auto personalization using BetterAuth (Level 10)
+Auto Personalize (Level 10)
+
+Reads BetterAuth session via cookies
+
+Extracts preferredLevel
+
+Loads markdown
+
+Builds persona + system prompt
+
+Calls OpenAI (async)
+
+Returns rewritten markdown
+
+Working correctly except auth server (not installed yet).
+
+7. RAG Services
+embeddings.py
+
+Model: text-embedding-3-small
+
+Dimension: 1536
+
+Function: embed_texts()
+
+qdrant_service.py
+
+Creates collection with COSINE distance
+
+Uses integer point IDs (Qdrant requirement)
+
+Upserts chunks with payload
+
+search() runs vector query
+
+docs_service.py
+
+Computes PROJECT_ROOT
+
+Locates MD / MDX chapters
+
+Errors clearly if file not found
+
+auth_client.py
+
+Contacts BetterAuth server (not installed yet)
+
+Gracefully handles:
+
+missing cookies
+
+401
+
+server unreachable
+
+rag_service.py
+
+Implements:
+
+RAG question answering
+
+Urdu translation
+
+Manual chapter personalization
+
+Build persona instructions
+
+Ask section stub
+
+8. Qdrant Indexing
+
+Copied old docs → new project:
+
+apps/book-frontend/docs/
+
+
+Ran indexer:
+
+python -m app.scripts.index_textbook
+
+
+Output:
+
+Loaded 9 chapters
+
+Created 59 chunks
+
+Embedded + stored into Qdrant
+
+Final message: Done
+
+9. Swagger Verification
+
+Opened:
+
+http://127.0.0.1:8000/docs
+
+
+Validated:
+
+/chat works
+
+/chat/personalize works
+
+/chat/translate/urdu works
+
+/chat/ask-section stub OK
+
+/chat/personalize/auto returns:
+
+correct error → "Auth server unreachable"
+
+Perfect behavior.
+
+✅ DAY 02 – 2025-12-10
+Frontend Wiring + Full Tool UI Working
+1. Copied Frontend Into New Project
+
+From old:
+
+C:\Users\Shoaib\Documents\ai-physical-humanoid-textbook\apps\book-frontend
+
+
+To new:
+
+D:\new-ai-physical-humanoid-textbook\apps\book-frontend
+
+
+Installed dependencies:
+
+npm install
+npm start
+
+
+Docusaurus running on:
+
+http://localhost:3000
+
+2. Added AI Tools Component
+
+Inserted in all MDX chapters:
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+<ChapterActions docId="foundations/how-to-use-this-book" />
+
+
+Confirmed Tools Tab appears with:
+
+Ask This Section
+
+Translate to Urdu
+
+Personalize (Manual)
+
+Auto Personalize (Beta)
+
+3. Verified Tool Buttons (UI → Backend)
+Tool	Status	Notes
+Ask This Section	🟡 Working stub	Returns correct message
+Translate to Urdu	🟢 Fully working	Returns correct translated markdown
+Personalize (Manual)	🟢 Fully working	Level 8 endpoint works end-to-end
+Auto Personalize	🔴 Waiting on BetterAuth	Correct fallback message: "Failed to reach auth server"
+📌 WHAT IS LEFT (Remaining Work)
+EASY (can finish in 20–30 minutes)
+
+Ask-This-Section real implementation
+
+Clean UI polish
+
+Minor history updates
+
+MEDIUM (1.5 hours)
+
+Build BetterAuth server OR disable auth requirement
+
+Make Auto Personalize fully functional
+
+Add custom error messages / graceful fallback
+
+HARD (Bonus)
+
+Claude Subagents
+
+Tool orchestration / multi-step reasoning
+
+Chapter-level metadata + analytics
+
+⏱ TOTAL TIME NEEDED
+To finish EASY + MEDIUM:
+
+≈ 2 hours — you and me together smoothly ❤️
+
+To finish EVERYTHING including bonus:
+
+≈ 3.5 hours total
+(very manageable)
+
+❤️ Ready for Next Step
+
+You said:
+
+“let’s do things one by one”
+
+Just tell me:
+
+Which part should we tackle next?
+
+1 → Ask This Section (proper AI RAG)
+2 → UI Polish
+3 → Auto Personalize (disable auth or install auth)
+4 → Claude subagents

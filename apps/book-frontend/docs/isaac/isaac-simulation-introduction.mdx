@@ -1,0 +1,76 @@
+---
+id: isaac-simulation-introduction
+title: Introduction to Isaac Simulation
+sidebar_label: Introduction to Isaac Simulation
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Introduction to Isaac Simulation
+
+## Overview
+Isaac Simulation (Isaac Sim) is NVIDIA’s high-fidelity robotics simulator built on **Omniverse**, designed for developing, testing, and validating intelligent robots—especially humanoids—before using real hardware.  
+It provides realistic physics, photorealistic rendering, GPU-accelerated performance, and powerful tools for sensor simulation, reinforcement learning, and synthetic data generation.
+
+This chapter introduces the core ideas behind Isaac Sim and explains why it is essential for modern robotics and Physical AI.
+
+---
+
+## Key Concepts
+
+- **Digital Twins** — High-accuracy virtual replicas of robots and environments, used for testing without physical risks.  
+- **USD (Universal Scene Description)** — The main file format used by Isaac Sim to build worlds, robots, and assets.  
+- **PhysX Simulation** — NVIDIA’s advanced physics engine powering realistic motion, contacts, collisions, and articulation.  
+- **Sensor Simulation** — Built-in support for RGB cameras, LiDAR, depth sensors, IMUs, and more.  
+- **Sim-to-Real Transfer** — Training or testing in simulation and deploying behaviors directly to real robots.
+
+---
+
+## Detailed Explanation
+
+Isaac Sim bridges the gap between software intelligence and physical robots. Instead of testing code directly on hardware—where mistakes can damage expensive equipment—engineers experiment safely inside a digital world.  
+The simulator mirrors real-world physics, lighting, contacts, and robot kinematics, allowing developers to explore humanoid behaviors such as balance, walking, manipulation, and environmental interaction.
+
+One of Isaac Sim’s biggest strengths is its **USD-based world building**. USD allows scenes to be modular, layered, and extensible, so you can load rooms, furniture, robots, and sensors with minimal code. This is especially valuable for humanoid robots that must navigate human environments like kitchens, offices, and classrooms.
+
+Another important part is **sensor realism**. Isaac Sim can generate synthetic camera images, LiDAR signatures, and depth clouds that closely match real sensors. This is critical for training perception systems, especially for tasks like human detection, obstacle mapping, and object manipulation.
+
+Finally, Isaac Sim integrates tightly with both **ROS 2** and **Python APIs**, giving developers flexible control. Combined with reinforcement learning tools like Isaac Lab or Isaac Gym, it becomes an end-to-end pipeline for training intelligent humanoids in large-scale simulation.
+
+---
+
+## Example
+
+Here’s a simple conceptual workflow:
+
+1. Load a humanoid robot model in Isaac Sim.  
+2. Place it inside a virtual apartment environment.  
+3. Add a camera and LiDAR to its head.  
+4. Run physics simulation to let the robot stand, walk, or balance.  
+5. Stream sensor data to ROS 2 for perception algorithms.  
+6. Validate navigation and manipulation behaviors before deploying code to a real robot.
+
+This cycle dramatically speeds up development and reduces hardware risks.
+
+---
+
+## Real-World Application
+
+- **Humanoid robot companies** use Isaac Sim to teach robots to walk, grasp objects, and navigate rooms.  
+- **Warehouse automation** teams test picking and stacking actions before deploying real robots.  
+- **Autonomous vehicle researchers** generate synthetic sensor data for training ML models.  
+- **Educational programs** use Isaac Sim to teach students robotics without requiring expensive hardware.
+
+Simulation makes robotics development **cheaper, faster, and safer**, enabling rapid innovation.
+
+---
+
+## Summary
+
+- Isaac Sim is a powerful simulation platform for robotics and humanoids.  
+- It offers realistic physics, sensor simulation, USD-based world building, and ROS 2 integration.  
+- Developers can train, test, and validate robot behavior without using real hardware.  
+- It is essential for modern Physical AI and large-scale humanoid experimentation.
+
+---
+
+<ChapterActions docId="isaac-sim/isaac-simulation-introduction" />

@@ -1,0 +1,71 @@
+---
+id: humanoid-manipulation
+title: Humanoid Robotics — Manipulation & Interaction
+sidebar_label: Chapter 3 — Manipulation & Interaction
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Robotics — Manipulation & Interaction
+
+## Overview
+Manipulation is the ability of a humanoid robot to use its hands, arms, and upper body to interact with the world—grasping objects, opening doors, lifting items, and performing tasks designed for humans. Because our world is built for human hands, humanoids must achieve precise, stable, and safe manipulation to be truly useful.
+
+## Key Concepts
+- **End Effectors** — Hands or grippers used to grasp and interact with objects.
+- **Grasp Types** — Pinch, power grip, precision grip, and adaptive grasping.
+- **Force & Tactile Sensing** — Detecting pressure, slip, and contact.
+- **Inverse Kinematics (IK)** — Computing arm joint angles to reach a target position.
+- **Whole-Body Interaction** — Coordinating arms, torso, and legs for stable manipulation.
+
+## Detailed Explanation
+
+Manipulation is more than simply moving an arm. A humanoid must understand the shape, weight, friction, and placement of objects before picking them up. End effectors may resemble human hands or may be simple grippers optimized for industrial tasks.
+
+To grasp objects, robots rely on **grasp planning**—selecting the best finger configuration, contact points, and wrist orientation. The robot may choose between:
+
+- **Power grasp** for lifting heavy items  
+- **Pinch grasp** for delicate objects  
+- **Precision grasp** for small components  
+
+Once a target grasp is chosen, **Inverse Kinematics (IK)** calculates how each joint should move so the hand reaches the exact position and orientation. Advanced humanoids use redundancy in their arms to avoid collisions with their own body.
+
+Manipulation also depends on control loops using **force sensors**, **torque sensors**, and **tactile feedback**. If the robot feels the object slipping, it tightens its grip. If it feels too much force, it loosens to avoid damage.
+
+**Whole-body control** is essential. When lifting a box, the robot shifts its center of mass backward. When opening a heavy door, it braces using legs and torso. Manipulation is deeply connected to balance and locomotion, not isolated to the arm.
+
+Vision plays a major role. Cameras and depth sensors help detect object pose, material, and motion. AI models estimate how the robot should approach the object and how humans typically handle it.
+
+## Example
+A humanoid in a home environment receives the task:
+
+“Pick up the cup from the table and place it in the kitchen.”
+
+Steps include:
+
+1. Detect cup using vision  
+2. Plan grasp pose and hand orientation  
+3. Move arm to pre-grasp position  
+4. Close fingers with proper force  
+5. Lift while stabilizing upper body  
+6. Walk while maintaining balance  
+7. Place cup safely in the kitchen  
+
+Every step uses feedback control and environment awareness.
+
+## Real-World Application
+Humanoid manipulation is used in:
+
+- **Warehouses** — Picking products from shelves  
+- **Manufacturing** — Handling tools and components  
+- **Hospitals** — Assisting with lifting, carrying, handing items  
+- **Home robots** — Daily housework tasks  
+- **Elderly care** — Helping people with limited mobility  
+
+The more advanced the manipulation, the closer humanoids come to being universally useful in human spaces.
+
+## Summary
+Humanoid manipulation requires coordinated arm motion, grasp planning, IK, force sensing, and whole-body stability. With advanced feedback control and vision, humanoids can perform complex tasks like lifting, placing, opening, and handing over objects—bringing robots closer to seamless interaction with human environments.
+
+---
+
+<ChapterActions docId="humanoid-robotics/humanoid-manipulation" />

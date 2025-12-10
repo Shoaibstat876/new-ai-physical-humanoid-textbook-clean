@@ -1,0 +1,165 @@
+---
+id: robot-control-systems
+title: Robot Control Systems
+sidebar_label: Control Systems
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Robot Control Systems
+
+## Overview
+Control systems allow robots to move with purpose, accuracy, and safety. Unlike simple machines, humanoid robots must constantly sense their environment, calculate the correct action, and adjust their movements in real time. This chapter explains the core ideas behind robot control systems, including feedback loops, PID control, trajectory planning, and modern whole-body controllers used in advanced humanoids.
+
+---
+
+## Key Concepts
+- **Feedback Control** — Continuously measuring output and correcting errors.
+- **PID Controller** — The most widely used control algorithm for motors and joints.
+- **Trajectory Planning** — Precomputing smooth motion for walking, lifting, or manipulation.
+- **Feedforward Control** — Predicting forces before they occur.
+- **Whole-Body Control** — Coordinating all joints together for balance and locomotion.
+
+---
+
+## Detailed Explanation
+
+### 1. What Is a Control System?
+A control system tells a robot **how to move**, not just **where to move**.  
+Even a simple action like raising an arm requires precise commands:
+
+- How fast should the motor rotate?
+- How much torque is needed?
+- How to prevent shaking or overshoot?
+- How to react if the robot bumps into something?
+
+Control systems ensure motion is **stable**, **smooth**, and **safe**.
+
+---
+
+### 2. Feedback Control (Closed-Loop Control)
+Humanoid robots use **closed-loop control**, which means:
+
+1. The robot takes an action  
+2. Sensors measure the result  
+3. Controller checks if the result matches the target  
+4. Adjustments are made immediately  
+
+Example:  
+A robot wants its arm joint at **30°**.  
+If the sensor reads **28°**, the controller adds torque until it reaches 30°.
+
+This loop runs hundreds or thousands of times per second.
+
+---
+
+### 3. PID Control (Proportional–Integral–Derivative)
+PID is the most famous controller in robotics.
+
+It controls error in three smart ways:
+
+- **P — Proportional**  
+  Fixes immediate error  
+
+- **I — Integral**  
+  Fixes long-term drift  
+
+- **D — Derivative**  
+  Fixes sudden changes  
+
+Humanoid joints (knees, hips, elbows, ankles) almost always use PID at low level.
+
+---
+
+### 4. Feedforward Control
+Feedback control reacts *after* errors appear.  
+Feedforward predicts motion requirements *before* the robot moves.
+
+Example:  
+If a robot lifts a heavy object, it knows torque requirements in advance.
+
+Combined control =  
+**Feedforward for prediction** + **PID for correction**
+
+This creates stable, human-like movement.
+
+---
+
+### 5. Trajectory Planning
+Complex motion — walking, climbing stairs, grasping — requires a **trajectory**, which is:
+
+- A path in space  
+- A smooth timeline for all joints  
+- A plan that avoids obstacles  
+- A safe, stable sequence of movements  
+
+Trajectory planners compute:
+
+- Joint angles at every moment  
+- Velocities  
+- Accelerations  
+
+Robots follow these trajectories using PID and feedforward control.
+
+---
+
+### 6. Whole-Body Control (WBC)
+Humanoid robots must coordinate **all joints together**, not individually.
+
+WBC ensures:
+
+- Balance while walking  
+- Proper weight shifting  
+- Coordination of arms while carrying objects  
+- Safe recovery from pushes  
+- Dynamic locomotion  
+
+WBC uses:
+
+- Optimization algorithms  
+- Dynamics models  
+- Real-time balancing  
+
+---
+
+## Example
+
+A robot must pick a box from the floor.
+
+The control system will:
+
+1. Plan arm and torso trajectory  
+2. Use IK to find joint angles  
+3. Apply PID + feedforward to move smoothly  
+4. Monitor force sensors in the hand  
+5. Adjust grip if load changes  
+6. Shift body weight for balance  
+7. Lift box using whole-body control  
+
+All these actions run within milliseconds.
+
+---
+
+## Real-World Application
+
+Robot control systems enable:
+
+- **Warehouse robots** lifting heavy packages  
+- **Search-and-rescue robots** walking on uneven terrain  
+- **Medical robots** performing precise tasks  
+- **Industrial humanoids** operating factory machines  
+
+Without robust control systems, humanoid robots cannot safely interact with humans or the environment.
+
+---
+
+## Summary
+- Control systems calculate *how* a robot should move.  
+- PID controllers stabilize joints and smooth motion.  
+- Trajectory planning generates safe and smooth movements.  
+- Whole-body control coordinates all limbs for locomotion and manipulation.  
+- Modern humanoid robots rely on real-time feedback and predictive control for safe operation.
+
+---
+
+<ChapterActions docId="foundations/robot-control-systems" />

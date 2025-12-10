@@ -1,0 +1,162 @@
+---
+id: robot-asset-import
+title: Importing Humanoid & Robot Assets in Isaac Sim
+sidebar_label: Robot Asset Import
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Importing Humanoid & Robot Assets in Isaac Sim
+
+## Overview
+Isaac Sim supports importing robot models from many formats, including **URDF, USD, MJCF, and custom meshes**.  
+This chapter explains how to bring a humanoid robot or any robotic system into the simulation environment.  
+You will learn how to prepare assets, fix scaling issues, configure materials, and ensure the robot behaves physically correct.
+
+---
+
+## Key Concepts
+
+- **URDF Import** — Convert standard robotics models into Isaac-ready USD files.  
+- **USD Assets** — Native Omniverse format for stable, fast simulation.  
+- **Joint & Articulation Mapping** — Ensuring the imported robot behaves realistically.  
+- **Scaling & Orientation Fixes** — Handling mismatched units or flipped axes.  
+- **Material & Collider Setup** — Making the robot interact properly with physics.  
+
+---
+
+## Detailed Explanation
+
+Isaac Sim uses **USD (Universal Scene Description)** as its core asset format.  
+Most robotics developers start with URDF, so Isaac Sim includes tools to convert URDF → USD.
+
+### **1. URDF Import**
+URDF (Unified Robot Description Format) is common in ROS and robotics research.
+
+Isaac Sim’s URDF importer automatically maps:
+
+- Links → rigid bodies  
+- Joints → articulations  
+- Collisions → colliders  
+- Visual meshes → render geometries  
+
+After import, you can adjust:
+
+- Joint limits  
+- Mass & inertia  
+- Physics materials  
+- Collider accuracy  
+
+This ensures realistic performance.
+
+### **2. USD Assets (Native Format)**
+USD is optimized for:
+
+- Large environments  
+- Multi-robot scenes  
+- High-performance GPU simulation  
+
+Robots stored in USD load faster and behave more consistently than directly using URDF.
+
+A typical humanoid USD file has:
+
+- A root prim  
+- Articulation hierarchy  
+- Colliders  
+- Materials  
+- Sensors (optional)  
+
+USD also supports nondestructive edits, letting you override parts without breaking the entire robot.
+
+### **3. Fixing Scaling & Orientation**
+Many imported robots have issues like:
+
+- Being too small or too large  
+- Facing the wrong direction  
+- Misaligned joints  
+
+To fix these:
+
+- Set **metersPerUnit** to match real-world meters.  
+- Apply transforms at the root prim.  
+- Recalculate mass/inertia after scaling.  
+
+For humanoids, realism requires correct foot size, limb lengths, and joint orientations.
+
+### **4. Material & Collider Setup**
+Imported meshes sometimes have poor or missing colliders.  
+Replace mesh colliders with:
+
+- Capsules for limbs  
+- Boxes for torso  
+- Simple shapes for feet  
+
+This avoids simulation instability.
+
+Materials also matter:
+
+| Part | Recommended Material |
+|------|----------------------|
+| Feet | High friction (0.8–1.0) |
+| Hands | Medium friction (0.5–0.7) |
+| Torso | Low friction to avoid sticking |
+
+### **5. Testing the Imported Asset**
+After import, always verify the robot by:
+
+1. Dropping it under gravity  
+2. Checking if it stands correctly  
+3. Manually actuating joints  
+4. Ensuring no jitter or explosion occurs  
+5. Playing an example animation (walking, grasping)
+
+This confirms physics constraints are correct.
+
+---
+
+## Example
+
+Import a simple humanoid URDF:
+
+1. Open **Isaac Sim → URDF Importer**  
+2. Select `humanoid.urdf`  
+3. Choose:
+
+- *Fix base* = off  
+- *Self-collisions* = on  
+- *Convex decomposition* = on  
+
+4. Import and convert to USD  
+5. Edit colliders and materials  
+6. Test articulation movement  
+7. Save final robot to:
+
+`/Assets/Robots/Humanoid/humanoid.usd`
+
+Now the humanoid is ready for walking, reinforcement learning, or manipulation tasks.
+
+---
+
+## Real-World Application
+
+Companies like **Figure**, **Tesla**, **Agility Robotics**, and **1X** import humanoid models into simulation to:
+
+- Test locomotion algorithms  
+- Predict hardware failures  
+- Train reinforcement learning agents  
+- Validate actuators before physical trials  
+
+Simulation reduces cost and prevents hardware damage.
+
+---
+
+## Summary
+
+- Isaac Sim supports URDF, USD, and mesh-based robot imports.  
+- USD is the most stable and recommended format.  
+- Fix scaling, orientation, materials, and colliders after import.  
+- Proper setup ensures realistic humanoid simulation.  
+- Asset quality directly affects training and behavior performance.
+
+---
+
+<ChapterActions docId="isaac-sim/robot-asset-import" />

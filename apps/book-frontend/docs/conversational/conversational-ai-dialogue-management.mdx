@@ -1,0 +1,126 @@
+---
+id: conversational-ai-dialogue-management
+title: Dialogue Management & Multi-Turn Interaction
+sidebar_label: Dialogue Management
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Dialogue Management & Multi-Turn Interaction
+
+## Overview  
+Dialogue management is the “brain” of a conversational AI system. It decides how a robot should respond, when to clarify instructions, how to maintain context across multiple turns, and how to translate language into meaningful actions. For humanoid robots, dialogue management is not just about conversation—it is about coordinating speech with physical behavior in a safe and intelligent manner.
+
+## Key Concepts
+- **Dialogue State Tracking** — Keeping memory of the conversation so the robot stays coherent.
+- **Intent Recognition** — Understanding what the user *really* wants.
+- **Context Management** — Handling follow-up questions, pronouns, and ambiguities.
+- **Clarification Strategies** — Asking questions when commands are unclear or risky.
+- **Policy Decision Making** — Choosing the best response or action for each step.
+
+## Detailed Explanation
+
+### 1. Dialogue State Tracking  
+Robots need to remember what was said before. If you tell a robot:
+
+**“Pick up the cup.”**  
+Then later say:  
+**“Put it on the table.”**
+
+The robot needs to understand what *“it”* refers to. Dialogue state tracking stores:
+- Objects referenced earlier  
+- User intentions  
+- Safety considerations  
+- Pending tasks  
+
+This prevents confusion and enables natural multi-turn conversations.
+
+### 2. Intent Recognition  
+Intent recognition extracts the purpose behind the user’s words.  
+Examples:  
+
+| User Says | Robot Intent |
+|----------|---------------|
+| “Can you clean this area?” | Start cleaning task |
+| “Bring me a bottle of water.” | Fetch task |
+| “Explain this topic.” | Teaching/clarification task |
+
+For humanoids, intent often includes spatial and physical components:
+- Where is the task happening?
+- What object is involved?
+- Is movement required?
+
+### 3. Context & Pronoun Handling  
+Language is full of ambiguity.  
+Users often say:
+
+- “Put that there.”  
+- “Move it to the left.”  
+- “Give me the other one.”  
+
+Dialogue management resolves these by:
+- Using vision to identify candidate objects  
+- Using memory to interpret references  
+- Asking clarifying questions when necessary  
+
+This prevents unsafe or incorrect actions.
+
+### 4. Clarification Strategies  
+Robots should *not guess* when instructions are unclear or potentially unsafe.  
+Example:  
+If a teacher says, **“Hand this out to everyone,”** but there are multiple stacks of papers, the robot should ask:
+
+**“Do you mean the worksheets on the left or the assignment sheets on the right?”**
+
+Clarification reduces:
+- Mistakes  
+- Safety risks  
+- User frustration  
+
+### 5. Response Policy  
+A dialogue policy determines what the robot should do next:
+- Respond verbally  
+- Execute a movement  
+- Ask a question  
+- Reject unsafe instructions  
+
+For example:
+- If a child says, *“Pick me up!”* the robot should politely decline for safety reasons.  
+- If a teacher says, *“Bring the blue marker,”* the robot should confirm if multiple markers exist.
+
+Policies balance:
+- User satisfaction  
+- Physical constraints  
+- Safety rules  
+- Social norms  
+
+## Example  
+Imagine a humanoid assisting in a science lab.
+
+Student: **“Robot, bring me that thing from yesterday.”**  
+Robot:  
+1. Checks memory: What was used yesterday?  
+2. Uses vision: Identifies beakers, sensors, and tools.  
+3. Asks: **“Do you mean the pH sensor from yesterday’s experiment?”**  
+4. When student confirms, the robot fetches it safely.
+
+This multi-turn exchange is only possible with strong dialogue state and clarification logic.
+
+## Real-World Application
+- **OpenAI SORA Agents & Vision Models** — Understanding context and predicting multi-step behavior.  
+- **NVIDIA Project GR00T** — Embodied multi-turn interaction for humanoid learning.  
+- **Hospital robots** — Need dialogue management to handle patient requests accurately.  
+- **Classroom humanoids** — Must clarify tasks before moving near children.  
+
+Dialogue management makes robots trustworthy and safe in real human environments.
+
+## Summary
+- Dialogue management maintains conversation memory and context.  
+- Robots must resolve ambiguity and avoid guessing.  
+- Multi-turn interactions allow safe, natural communication.  
+- Policies coordinate language with physical actions.  
+- This chapter builds the foundation for conversational robots that collaborate effectively.
+
+---
+
+<ChapterActions docId="conversational/conversational-ai-dialogue-management" />

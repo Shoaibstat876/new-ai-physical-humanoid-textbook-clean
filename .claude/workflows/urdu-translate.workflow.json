@@ -1,0 +1,13 @@
+{
+  "name": "urduTranslate",
+  "description": "Translate English textbook content to Urdu",
+  "steps": [
+    {
+      "id": "translate",
+      "action": "llm.translateUrdu",
+      "input": {
+        "text": "{{text}}"
+      }
+    }
+  ]
+}

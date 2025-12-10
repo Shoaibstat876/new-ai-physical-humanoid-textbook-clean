@@ -1,0 +1,57 @@
+---
+id: humanoid-safety
+title: Humanoid Robotics — Safety, Ethics & Human Interaction
+sidebar_label: Chapter 5 — Safety, Ethics & Human Interaction
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Robotics — Safety, Ethics & Human Interaction
+
+## Overview
+As humanoid robots move closer to working in homes, factories, hospitals, and public spaces, safety and human-centered design become essential. A humanoid must not only perform tasks—it must operate predictably, respectfully, and safely around people. This chapter explores mechanical safety, software safeguards, ethical principles, and strategies for natural human–robot interaction.
+
+## Key Concepts
+- **Physical Safety Systems** — Hardware features like torque limits, compliant joints, padding, and sensors to prevent injury.
+- **Software Safety & Guardrails** — Collision detection, fall-prevention, safe-motion planners, and emergency-stop logic.
+- **Ethical Principles** — Transparency, fairness, privacy, and responsible use of autonomous systems.
+- **Human–Robot Interaction (HRI)** — Designing robots that behave in ways humans naturally understand.
+- **Social Cues & Communication** — Using gestures, lights, sound, or screen expressions to convey intent.
+
+## Detailed Explanation
+
+Humanoids work in close proximity to people, so **physical safety** is a foundational requirement. Robots often include torque-limited joints, soft exterior shells, compliant actuators, and sensors that detect unexpected contact. These reduce the risk of harm if a robot bumps into a person or object.
+
+**Software safety** is equally critical. Robots monitor body posture, joint forces, and motion trajectories in real time. If the robot detects instability, a fall-prevention controller activates. If a collision is predicted, planners slow down or reroute movement. Emergency stops (physical buttons and remote triggers) allow humans to instantly halt all motion.
+
+Ethics play a growing role in humanoid design. Robots must respect privacy when gathering images or audio. Their decision-making must be transparent and aligned with human goals. Developers must ensure the robot does not reinforce harmful biases or act unpredictably in ambiguous situations.
+
+Effective **human–robot interaction (HRI)** allows robots to work alongside humans naturally. Because humanoids share our shape, humans expect behaviors like eye contact, smooth gestures, and respectful spacing. Robots communicate intent using head movements, LEDs, voice, or screens. Small cues—like turning the torso before walking—help people understand what the robot is about to do.
+
+Humanoids also follow **social norms**, such as yielding space in a hallway or avoiding abrupt movements. These simple strategies reduce anxiety and build trust, especially in workplaces or homes where robots collaborate with humans daily.
+
+## Example
+A humanoid assistant operates in a hospital:
+
+1. **Proximity sensors** detect nurses moving nearby.  
+2. Robot reduces speed automatically when people approach.  
+3. When delivering items, it uses **eye-gaze cues** to signal direction.  
+4. If a patient steps unexpectedly into its path, the robot executes a **safe stop**.  
+5. Voice prompts explain its next action: “I am moving to the medication station.”
+
+This blend of safety + communication makes the robot predictable and trustworthy.
+
+## Real-World Application
+- **Factories** — Safe cobot-humanoid collaboration for assembly tasks  
+- **Hospitals** — Patient handling, delivery tasks, and companionship  
+- **Home robotics** — Cleaning, lifting, organizing, and elderly support  
+- **Public assistance** — Navigation, information kiosks, and customer service  
+- **Search and rescue** — Operation in dangerous zones while protecting human rescuers  
+
+Humanoids will only become widely adopted if they are proven safe, reliable, and respectful of human needs.
+
+## Summary
+Safety and ethics are the backbone of humanoid deployment. Through hardware safeguards, intelligent software, ethical frameworks, and strong human–robot interaction design, humanoids become effective partners rather than unpredictable machines. A safe robot is a trusted robot—and trust is essential for real-world adoption.
+
+---
+
+<ChapterActions docId="humanoid-robotics/humanoid-safety" />

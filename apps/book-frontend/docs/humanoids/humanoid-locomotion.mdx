@@ -1,0 +1,59 @@
+---
+id: humanoid-locomotion
+title: Humanoid Robotics — Locomotion & Balance
+sidebar_label: Chapter 2 — Locomotion & Balance
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Robotics — Locomotion & Balance
+
+## Overview
+Locomotion is one of the hardest engineering challenges in humanoid robotics. Unlike wheeled robots, humanoids must continuously balance on two legs, shift weight smoothly, and adapt to uneven ground while staying stable. This chapter explains how humanoids walk, how they maintain balance, and why locomotion is central to Physical AI.
+
+## Key Concepts
+- **Dynamic Balance** — Stability while moving, turning, or carrying loads.
+- **Center of Mass (CoM)** — The point where the robot’s mass is concentrated; must stay inside the support area.
+- **Zero Moment Point (ZMP)** — A mathematical model for stable walking.
+- **Gait Planning** — Algorithms that decide where and how feet should move.
+- **Whole-Body Control** — Coordinating every joint during motion.
+
+## Detailed Explanation
+
+Walking is not a simple left–right motion. For a humanoid robot, each step is a controlled fall that requires constant adjustment. The robot must predict how its body will move, shift its center of mass, and respond to disturbances such as uneven floors, carrying objects, or interactions with humans.
+
+The **Center of Mass** is crucial. When the robot lifts one foot, its entire weight rests on the other leg. If the CoM moves outside the support polygon created by the foot, the robot will fall. Controllers monitor the CoM hundreds of times per second to keep balance.
+
+To plan stable steps, humanoids use the **Zero Moment Point (ZMP)** model. The ZMP ensures the robot’s motion does not generate tipping forces. Locomotion planners generate CoM trajectories and footstep positions based on this model.
+
+Once the plan is created, **Whole-Body Controllers (WBC)** coordinate dozens of joints—hips, knees, ankles, arms, and spine. When the robot walks, its arms naturally swing to improve balance, just like humans. If it carries a box, the arms shift position to counterweight the load.
+
+Real-world locomotion is even harder because surfaces may be slippery, uneven, or cluttered. Robots use IMUs, force sensors, and vision to detect these variations and adapt their gait in real time.
+
+## Example
+A humanoid robot walking in a school corridor must:
+
+1. Track its center of mass  
+2. Generate stable footstep patterns  
+3. Avoid desks, bags, and students  
+4. Adjust its posture when turning corners  
+5. Maintain balance while carrying books  
+
+A small push from a student should not make the robot fall — balance controllers automatically apply corrective torque to stay upright.
+
+## Real-World Application
+Humanoid locomotion is used in:
+
+- **Warehouses** — Walking between shelves, climbing ramps  
+- **Factories** — Navigating tight environments  
+- **Hospitals** — Carrying supplies safely  
+- **Home robotics** — Moving on stairs, carpets, tiles  
+- **Search and rescue** — Walking on rubble and uneven terrain  
+
+Companies like Boston Dynamics, Agility Robotics, and Figure AI are pushing the limits of locomotion.
+
+## Summary
+Humanoid locomotion requires dynamic balancing, precise modeling, gait planning, and real-time control. Stability depends on the robot’s center of mass, ZMP-based planning, and whole-body coordination. Mastering these foundations prepares learners for advanced topics in manipulation, environment interaction, and full-body autonomy.
+
+---
+
+<ChapterActions docId="humanoid-robotics/humanoid-locomotion" />

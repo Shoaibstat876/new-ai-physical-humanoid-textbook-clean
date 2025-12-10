@@ -1,0 +1,118 @@
+---
+id: conversational-ai-natural-language-understanding
+title: Natural Language Understanding (NLU)
+sidebar_label: Natural Language Understanding
+---
+
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Natural Language Understanding (NLU)
+
+## Overview  
+Natural Language Understanding (NLU) is the ability of a robot or AI system to interpret the meaning behind human speech. While speech recognition converts words into text, NLU gives those words context, structure, and meaning. For humanoid robots, NLU is essential for performing tasks, understanding instructions, and interacting safely with humans.
+
+## Key Concepts  
+- **Intent Classification** — Detecting what the user wants to do.  
+- **Entity Extraction** — Identifying objects, locations, and details in commands.  
+- **Semantic Parsing** — Converting language into structured tasks or robot actions.  
+- **Disambiguation** — Resolving vague or incomplete instructions.  
+- **Grounding** — Connecting language to the physical world (objects, positions, sensors).
+
+## Detailed Explanation  
+
+### 1. Intent Classification  
+Intent is the *purpose* behind a user’s message.  
+When someone says:
+
+- “Open the door.” → *Intent: operate_door*  
+- “Explain kinematics.” → *Intent: teach_topic*  
+- “Bring me the red cup.” → *Intent: fetch_object*
+
+For humanoids, intents often include both *linguistic meaning* and *physical action*, making classification more complex.
+
+### 2. Entity Extraction  
+Entities add precision to an instruction.  
+Examples of entities:
+
+- Objects: *cup, bottle, book*  
+- Colors: *red, blue*  
+- Locations: *table, shelf, lab bench*  
+- Quantities: *two markers*  
+- People: *Shoaib, the teacher*
+
+A robot must correctly identify all entities before acting, especially when safety is involved.
+
+### 3. Semantic Parsing  
+Semantic parsing converts a sentence into a structured, machine-executable plan.
+
+**User:** “Place the blue notebook on the second shelf.”  
+**Parsed form:**  
+action: place
+object: notebook (blue)
+destination: shelf (index: 2)
+
+
+This allows robots to follow instructions without guessing.
+
+### 4. Disambiguation  
+Human language is messy. People often say:
+
+- “Put this over there.”  
+- “Move it to the right.”  
+- “Give me that one.”
+
+Without disambiguation, the robot might perform unsafe or incorrect actions.  
+A well-designed NLU system uses:
+
+- Vision  
+- Context  
+- Dialogue history  
+- Clarification questions  
+
+To resolve uncertainty.
+
+### 5. Grounding  
+Grounding connects words to the physical environment.  
+If a user says:
+
+**“Pick up the cup near the laptop.”**  
+
+The robot must:
+
+1. Detect all visible cups  
+2. Locate the laptop  
+3. Find the cup closest to it  
+4. Confirm if necessary  
+5. Plan the grasping action  
+
+Grounding is what makes humanoids intelligent in real-world spaces rather than just text-based systems.
+
+## Example  
+Teacher: **“Robot, bring me the tallest bottle from the lab shelf.”**
+
+NLU pipeline:  
+1. Intent → *fetch_object*  
+2. Entities → *object=bottle*, *property=tallest*, *location=lab shelf*  
+3. Semantic parse → Create a fetch task plan  
+4. Grounding → Use sensors to identify bottles and compare heights  
+5. Action → Robot retrieves correct object  
+
+This combination of linguistic and sensor-based understanding is key to embodied intelligence.
+
+## Real-World Application  
+- **NVIDIA GR00T + Robotics Foundation Models** use grounding + NLU to understand physical tasks.  
+- **Alexa / Google Assistant** use intent classification heavily for voice commands.  
+- **OpenAI Vision-Language Models (SORA, GPT-4o)** excel in grounding words to objects in images.  
+- **Hospital robots** interpret requests like “bring me water but not cold” using entity + intent models.
+
+## Summary  
+- NLU interprets meaning behind text or speech.  
+- Intent, entities, and semantic parsing form the core.  
+- Disambiguation prevents unsafe or wrong actions.  
+- Grounding connects language to the real physical world.  
+- Strong NLU is essential for humanoids to operate naturally and safely.
+
+---
+
+<ChapterActions docId="conversational/conversational-ai-natural-language-understanding" />
+

@@ -1,0 +1,136 @@
+/**
+ * Premium Hybrid Homepage Styling
+ * Combines Code A + Code B (Spec-Kit compatible)
+ */
+
+/* ================================
+   HERO SECTION CONTAINER
+   ================================ */
+.heroBanner {
+  padding: 5rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  /* Deep-tech gradient theme */
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1e293b 40%,
+    #0b1120 100%
+  );
+
+  color: #e2e8f0;
+}
+
+/* Subtle glow behind hero text */
+.heroBanner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 20%,
+    rgba(37, 99, 235, 0.25),
+    rgba(0, 0, 0, 0)
+  );
+  opacity: 0.7;
+}
+
+/* ================================
+   HERO TITLE + SUBTITLE (from Code A)
+   ================================ */
+.heroTitle {
+  font-size: 2.6rem;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+}
+
+.heroSubtitle {
+  max-width: 720px;
+  margin: 1rem auto 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #cbd5f5;
+}
+
+/* ================================
+   META STRIP (from Code A)
+   ================================ */
+.metaStrip {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  opacity: 0.95;
+}
+
+.metaStrip span {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+/* ================================
+   BUTTON ROW (from Code B)
+   ================================ */
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.8rem;
+  gap: 1rem;
+}
+
+.buttons .button {
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.buttons .button:hover {
+  background: #334155;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.4);
+}
+
+.buttons .button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ================================
+   MOBILE ADJUSTMENTS
+   ================================ */
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 3rem 1.5rem;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .heroSubtitle {
+    font-size: 0.95rem;
+  }
+
+  .metaStrip {
+    gap: 0.5rem 0.75rem;
+  }
+}

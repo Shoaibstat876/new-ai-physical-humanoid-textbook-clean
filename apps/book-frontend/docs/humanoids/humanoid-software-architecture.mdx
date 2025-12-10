@@ -1,0 +1,64 @@
+---
+id: humanoid-software-architecture
+title: Humanoid Robotics — Software Architecture & Intelligence Stack
+sidebar_label: Chapter 6 — Software Architecture & Intelligence Stack
+---
+import { ChapterActions } from '@site/src/components/ChapterActions';
+
+# Humanoid Robotics — Software Architecture & Intelligence Stack
+
+## Overview
+Modern humanoid robots rely on a layered software architecture that combines real-time control, perception, planning, simulation, safety, and high-level AI reasoning. This architecture enables the robot to sense its environment, understand tasks, plan motion, learn from experience, and interact safely with humans. This chapter explains how these systems connect to create an intelligent humanoid platform.
+
+## Key Concepts
+- **Low-Level Control Layer** — Real-time motor control, joint synchronization, PID/torque control loops.
+- **Mid-Level Planning Layer** — Motion planning, gait generation, manipulation, whole-body control.
+- **High-Level AI Layer** — Task planning, LLM-based reasoning, natural language interfaces.
+- **Perception & World Modeling** — Mapping, object detection, SLAM, depth estimation.
+- **Cloud & Simulation Integration** — Digital twins, training environments, remote policy updates.
+
+## Detailed Explanation
+
+A humanoid’s **software architecture** begins with the **low-level control layer**, responsible for reading joint sensors and producing precise motor commands in milliseconds. This layer ensures stable walking, balanced standing, and responsive manipulation. Real-time loops often run at 200–1,000 Hz for smooth, human-like movement.
+
+Above this lies the **mid-level planning layer**, which generates trajectories, footstep plans, and arm motions. Algorithms like MPC (Model Predictive Control), IK (Inverse Kinematics), and whole-body control coordinate all limbs to maintain balance while performing tasks. For humanoids, planning must consider the center of mass, ground contact points, and dynamic stability.
+
+The **perception system** feeds the robot’s understanding of the world. Using cameras, LiDAR, depth sensors, and tactile feedback, the robot builds a **world model**. SLAM algorithms update maps as the robot moves. Vision models recognize objects, detect human gestures, and estimate distances—critical for safe navigation.
+
+At the top sits the **high-level AI layer**. This includes task planners, dialogue systems, and increasingly, large language models (LLMs). These allow the humanoid to interpret instructions like “Pick up the box and place it on the table,” translate it into structured actions, and generate safe, optimized motions. Cognitive modules manage memory, reasoning, and multi-step task execution.
+
+Finally, **cloud and simulation integration** provides training, updates, and remote monitoring. Digital twins allow engineers to test new skills before deploying them on the physical robot. Reinforcement learning policies can evolve safely in simulation, then transfer to the real humanoid.
+
+Together, these layers make humanoids adaptable, intelligent, and capable of working in unpredictable human environments.
+
+## Example
+A warehouse humanoid receives the instruction:
+
+**“Find the blue package, pick it up, and carry it to Station B.”**
+
+This triggers:
+
+1. **LLM interpreter** → Converts instruction into structured tasks.  
+2. **Perception** → Identifies blue package using vision models.  
+3. **Planning layer** → Generates walking path and grasp trajectory.  
+4. **Control layer** → Executes smooth whole-body motion with balance compensation.  
+5. **Safety module** → Monitors proximity, reduces speed near humans.  
+6. **Digital twin** → Logs data for skill improvement.
+
+This shows how each software layer works together as a unified system.
+
+## Real-World Application
+- **Factories** — Autonomous humanoids performing repetitive or dangerous tasks.  
+- **Logistics** — Object picking, stacking, sorting, and transport.  
+- **Service robots** — Assisting customers, delivering items, replacing repetitive human labor.  
+- **Home robotics** — Cleaning, organizing, and supporting elderly care.  
+- **Rescue missions** — Navigating uneven terrain and interacting with damaged structures.  
+
+Software architecture determines reliability, safety, and the robot’s ability to learn new tasks.
+
+## Summary
+Humanoid intelligence emerges from a layered stack of control, perception, planning, and high-level AI reasoning. When combined with cloud simulation and safety systems, these layers enable robots to act autonomously and safely in human environments. Understanding this architecture is essential for building next-generation humanoid systems.
+
+---
+
+<ChapterActions docId="humanoid-robotics/humanoid-software-architecture" />
