@@ -162,6 +162,10 @@ def search(question: str, limit: int = 5) -> List[SearchResult]:
     """
     Vector similarity search over all textbook chunks.
 
+    Level-2 demo guardrail:
+      - If Qdrant is down / times out / misconfigured, DO NOT crash the API.
+      - Return empty hits instead of raising, so the app responds gracefully.
+
     Args:
         question:
             Natural language question to embed and search for.
@@ -182,31 +186,29 @@ def search(question: str, limit: int = 5) -> List[SearchResult]:
     try:
         # embed_texts returns List[List[float]]
         [query_vec] = embed_texts([question])
-    except Exception as e:
-        raise RuntimeError(f"[qdrant_service] Failed to embed query: {e}") from e
 
-    client = _get_client()
-
-    try:
+        client = _get_client()
         response = client.query_points(
             collection_name=settings.qdrant_collection,
             query=query_vec,
             with_payload=True,
             limit=limit,
         )
-    except Exception as e:  # pragma: no cover - network boundary
-        raise RuntimeError(f"[qdrant_service] Qdrant query failed: {e}") from e
 
-    results: List[SearchResult] = []
-    for hit in getattr(response, "points", []):
-        payload: Dict[str, Any] = hit.payload or {}
-        results.append(
-            SearchResult(
-                text=payload.get("text", "") or "",
-                doc_id=payload.get("doc_id", "") or "",
-                chunk_index=int(payload.get("chunk_index", 0) or 0),
-                score=float(hit.score),
+        results: List[SearchResult] = []
+        for hit in getattr(response, "points", []):
+            payload: Dict[str, Any] = hit.payload or {}
+            results.append(
+                SearchResult(
+                    text=payload.get("text", "") or "",
+                    doc_id=payload.get("doc_id", "") or "",
+                    chunk_index=int(payload.get("chunk_index", 0) or 0),
+                    score=float(hit.score),
+                )
             )
-        )
 
-    return results
+        return results
+
+    except Exception:
+        # ✅ Demo-safe fallback: no crash (no 500). Just behave like "no matches".
+        return []
