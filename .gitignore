@@ -1,36 +1,56 @@
+# ==============================
 # Python virtual environments
+# ==============================
 .venv/
 venv/
-
 apps/rag-backend/.venv/
 
-# Bytecode & cache
-__pycache__/
-*.pyc
+# ==============================
+# Python bytecode & cache
+# ==============================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-
+# ==============================
 # Environment variables
+# ==============================
 .env
 .env.*
 !.env.example
 
+# ==============================
+# Databases (CRITICAL)
+# ==============================
+auth.db
+*.db
+*.sqlite
+*.sqlite3
+
+# ==============================
 # Node.js
+# ==============================
 node_modules/
 
+# ==============================
 # Docusaurus build output
+# ==============================
 apps/book-frontend/build/
 apps/book-frontend/.docusaurus/
 
+# ==============================
 # VS Code
+# ==============================
 .vscode/
 
+# ==============================
 # Logs
+# ==============================
 *.log
 
+# ==============================
 # OS files
+# ==============================
 .DS_Store
 Thumbs.db
