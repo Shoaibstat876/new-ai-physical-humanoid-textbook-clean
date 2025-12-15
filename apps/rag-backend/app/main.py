@@ -11,6 +11,11 @@ Responsibilities:
 - Expose a simple root endpoint for quick diagnostics
 """
 
+from __future__ import annotations
+
+import os
+from typing import List
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,16 +35,21 @@ app = FastAPI(
 # ---------------------------------------------------------
 # CORS configuration
 #
-# For the hackathon we keep this simple and explicit:
+# Default (hackathon/local):
 # - Frontend runs on: http://localhost:3000
-# - Backend runs on:  http://localhost:8000
 #
-# If you later deploy to Vercel / production, you can
-# extend this list or load it from environment.
+# Optional (production):
+# - Set CORS_ORIGINS as comma-separated list:
+#   CORS_ORIGINS="https://your-site.vercel.app,https://custom-domain.com"
 # ---------------------------------------------------------
-ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+def _get_allowed_origins() -> List[str]:
+    env = os.getenv("CORS_ORIGINS", "").strip()
+    if env:
+        return [o.strip() for o in env.split(",") if o.strip()]
+    return ["http://localhost:3000"]
+
+
+ALLOWED_ORIGINS = _get_allowed_origins()
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,13 +75,9 @@ app.include_router(chat.router)
 
 
 # ---------------------------------------------------------
-# Root health endpoint
-# Useful to quickly verify that:
-# - the app booted
-# - settings are loaded
-# - CORS configuration is applied
+# Root endpoint (quick diagnostics)
 # ---------------------------------------------------------
-@app.get("/")
+@app.get("/", tags=["health"])
 async def root() -> dict:
     return {
         "message": "Physical AI RAG backend is running",
@@ -79,3 +85,11 @@ async def root() -> dict:
         "backend_port": settings.backend_port,
         "cors_origins": ALLOWED_ORIGINS,
     }
+
+
+# ---------------------------------------------------------
+# Dedicated health endpoint (nice for Uptime checks)
+# ---------------------------------------------------------
+@app.get("/health", tags=["health"])
+async def health() -> dict:
+    return {"status": "ok", "service": "rag-backend", "version": app.version}
