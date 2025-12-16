@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { BACKEND_BASE_URL, AUTH_SERVER_URL } from "../../config/runtime";
+import { BACKEND_BASE_URL, AUTH_SERVER_URL } from "@site/src/config/runtime";
 
 type Status = "ok" | "down" | "checking" | "na";
 
@@ -12,9 +12,6 @@ const POLL_MS = 5000;
 
 // Turn this OFF if you want Auth always N/A until auth server is deployed
 const AUTH_ENABLED = true;
-
-const BACKEND = BACKEND_BASE_URL;
-const AUTH = AUTH_SERVER_URL;
 
 function Chip({ label, status }: { label: string; status: Status }) {
   const { bg, text } = useMemo(() => {
@@ -81,28 +78,25 @@ export default function StatusBar() {
     let cancelled = false;
 
     const tick = async () => {
-      const backendPromise = probe(`${BACKEND}/health`);
+      const backendOk = await probe(`${BACKEND_BASE_URL}/health`);
 
-      const authPromise = AUTH_ENABLED
-        ? probe(`${AUTH}/healthz`)
-        : Promise.resolve(false);
-
-      const [backendOk, authOk] = await Promise.all([
-        backendPromise,
-        authPromise,
-      ]);
+      const authOk = AUTH_ENABLED
+        ? await probe(`${AUTH_SERVER_URL}/healthz`)
+        : false;
 
       if (cancelled) return;
 
       const now = Date.now();
 
-      setBackend({ status: backendOk ? "ok" : "down", checkedAt: now });
+      setBackend({
+        status: backendOk ? "ok" : "down",
+        checkedAt: now,
+      });
 
-      if (!AUTH_ENABLED) {
-        setAuth({ status: "na", checkedAt: now });
-      } else {
-        setAuth({ status: authOk ? "ok" : "down", checkedAt: now });
-      }
+      setAuth({
+        status: AUTH_ENABLED ? (authOk ? "ok" : "down") : "na",
+        checkedAt: now,
+      });
     };
 
     tick();
@@ -112,7 +106,7 @@ export default function StatusBar() {
       cancelled = true;
       globalThis.clearInterval(id);
     };
-  }, [BACKEND, AUTH, AUTH_ENABLED]);
+  }, []);
 
   const lastChecked =
     backend.checkedAt || auth.checkedAt
