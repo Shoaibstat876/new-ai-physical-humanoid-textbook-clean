@@ -1,13 +1,16 @@
 import React, { useState, FormEvent } from "react";
+import { AUTH_SERVER_URL } from "../config/runtime";
 
 type PreferredLevel = "beginner" | "intermediate" | "advanced";
 type FormStatus = string | null;
 
-// Prefer env var → fall back to local BetterAuth dev server
-const AUTH_SERVER_URL =
-  process.env.NEXT_PUBLIC_AUTH_SERVER_URL ?? "http://localhost:3005";
+function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/+$/, "");
+}
 
-const AUTH_BASE_URL = `${AUTH_SERVER_URL}/api/auth`;
+// ✅ Runtime config only (no process.env)
+const AUTH_SERVER = normalizeBaseUrl(AUTH_SERVER_URL);
+const AUTH_BASE_URL = `${AUTH_SERVER}/api/auth`;
 
 type AuthResponseShape = {
   detail?: string;
@@ -81,7 +84,6 @@ const AuthPage: React.FC = () => {
           profile: {
             softwareBackground,
             hardwareBackground,
-            // this is what we read on the backend:
             // user.preferredLevel OR user.profile.preferredLevel
             preferredLevel,
           },
@@ -174,8 +176,7 @@ const AuthPage: React.FC = () => {
         maxWidth: "900px",
         margin: "2rem auto",
         padding: "1rem",
-        fontFamily:
-          "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
       <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
@@ -233,11 +234,7 @@ const AuthPage: React.FC = () => {
             Software Background
             <select
               value={softwareBackground}
-              onChange={(e) =>
-                setSoftwareBackground(
-                  e.target.value as PreferredLevel,
-                )
-              }
+              onChange={(e) => setSoftwareBackground(e.target.value as PreferredLevel)}
               style={{
                 width: "100%",
                 padding: "0.4rem",
@@ -245,9 +242,7 @@ const AuthPage: React.FC = () => {
                 marginBottom: "0.75rem",
               }}
             >
-              <option value="beginner">
-                Beginner — new to programming
-              </option>
+              <option value="beginner">Beginner — new to programming</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced developer</option>
             </select>
@@ -265,13 +260,9 @@ const AuthPage: React.FC = () => {
                 marginBottom: "0.75rem",
               }}
             >
-              <option value="none">
-                No hardware yet (laptop only)
-              </option>
+              <option value="none">No hardware yet (laptop only)</option>
               <option value="basic">Basic Arduino / sensors</option>
-              <option value="robotics">
-                Robotics club / lab access
-              </option>
+              <option value="robotics">Robotics club / lab access</option>
             </select>
           </label>
 
@@ -336,9 +327,7 @@ const AuthPage: React.FC = () => {
               style={{
                 marginTop: "0.5rem",
                 fontSize: "0.8rem",
-                color: signUpStatus.startsWith("Account")
-                  ? "#065f46"
-                  : "#b91c1c",
+                color: signUpStatus.startsWith("Account") ? "#065f46" : "#b91c1c",
               }}
             >
               {signUpStatus}
@@ -348,9 +337,7 @@ const AuthPage: React.FC = () => {
 
         {/* ---------- SIGN IN ---------- */}
         <form onSubmit={handleSignIn}>
-          <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>
-            Sign in
-          </h2>
+          <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>Sign in</h2>
 
           <label style={{ display: "block", marginBottom: "0.5rem" }}>
             Email
@@ -405,9 +392,7 @@ const AuthPage: React.FC = () => {
               style={{
                 marginTop: "0.5rem",
                 fontSize: "0.8rem",
-                color: signInStatus.startsWith("Signed in")
-                  ? "#065f46"
-                  : "#b91c1c",
+                color: signInStatus.startsWith("Signed in") ? "#065f46" : "#b91c1c",
               }}
             >
               {signInStatus}

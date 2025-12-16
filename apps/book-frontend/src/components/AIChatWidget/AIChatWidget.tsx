@@ -1,34 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./AIChatWidget.module.css";
+import { BACKEND_BASE_URL } from "@site/src/config/runtime";
 
 /**
  * Level 6: RAG Chat Widget
  *
- * Spec-Kit Contract (frontend → backend):
+ * Contract:
  *   POST /chat
- *   Body (JSON):
- *   {
- *     "question": string
- *   }
- *
- * Spec-Kit Contract (backend → frontend):
- *   200 OK
- *   {
- *     "answer"?: string;
- *     "error"?: string;
- *   }
- *
- * Notes:
- * - This widget is global (no props) and only sends a simple textbook question.
- * - It does NOT depend on docId / level (those appear in later levels).
- * - API base URL:
- *     - Prefer NEXT_PUBLIC_RAG_API_URL when available (build-time / env),
- *     - Otherwise fall back to http://localhost:8000 for local dev.
+ *   { "question": string }
+ *   -> { "answer"?: string, "error"?: string }
  */
-
-// -----------------------------
-// Types matching the /chat spec
-// -----------------------------
 
 type MessageSender = "user" | "ai";
 
@@ -46,23 +27,32 @@ type ChatResponsePayload = {
   error?: string;
 };
 
-// -----------------------------
-// Config: API base URL (Docusaurus-safe)
-// -----------------------------
-//
-// Use globalThis so we don't directly reference `process` in the browser.
-// In Node it will still work because globalThis.process exists.
-// In the browser, globalThis.process is usually undefined, which is safe
-// thanks to optional chaining.
+// Normalize base URL (prevents //chat bugs)
+function normalizeBaseUrl(url: string): string {
+  return (url || "").trim().replace(/\/+$/, "");
+}
 
-const API_BASE_URL: string =
-  ((globalThis as any).process?.env?.NEXT_PUBLIC_RAG_API_URL as
-    | string
-    | undefined) ?? "http://localhost:8000";
+// Build endpoint safely
+function buildChatUrl(baseUrl: string): string {
+  const base = normalizeBaseUrl(baseUrl);
+  return `${base}/chat`;
+}
 
-// -----------------------------
-// Component
-// -----------------------------
+// Small helper to timeout fetch (prevents “stuck”)
+async function fetchWithTimeout(input: RequestInfo, init: RequestInit, ms = 15000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+
+  try {
+    const res = await fetch(input, { ...init, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+const API_BASE_URL = normalizeBaseUrl(BACKEND_BASE_URL);
+const CHAT_URL = buildChatUrl(API_BASE_URL);
 
 export const AIChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,19 +60,14 @@ export const AIChatWidget: React.FC = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Keep a ref so we can scroll new messages into view
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const toggleOpen = () => setIsOpen((prev) => !prev);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
   }, [messages, isLoading]);
 
   const appendMessage = (message: Message) => {
@@ -93,54 +78,76 @@ export const AIChatWidget: React.FC = () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
-    // 1) Update local chat history immediately (optimistic UI)
-    const userMessage: Message = { sender: "user", text: trimmed };
-    appendMessage(userMessage);
+    appendMessage({ sender: "user", text: trimmed });
     setInput("");
     setIsLoading(true);
 
     try {
-      // 2) Build request exactly as Spec-Kit says
       const payload: ChatRequestPayload = { question: trimmed };
 
-      const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      // 🔎 Quick debug line (optional): check in browser console
+      console.log("[AIChatWidget] POST", CHAT_URL, { API_BASE_URL });
 
-      // 3) If HTTP status is not OK, still satisfy the contract with a friendly error
+      const response = await fetchWithTimeout(
+        CHAT_URL,
+        {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+        15000,
+      );
+
+      // If not OK, show real backend text too
       if (!response.ok) {
-        const aiMessage: Message = {
+        let bodyText = "";
+        try {
+          bodyText = await response.text();
+        } catch {
+          bodyText = "";
+        }
+
+        appendMessage({
           sender: "ai",
-          text: `Sorry, the AI backend returned an error (${response.status}). Please try again.`,
-        };
-        appendMessage(aiMessage);
+          text:
+            `Backend error (HTTP ${response.status}).\n` +
+            (bodyText ? `Details: ${bodyText}` : "No details returned."),
+        });
         return;
       }
 
-      // 4) Parse JSON in the shape of ChatResponsePayload
-      const data = (await response.json()) as ChatResponsePayload;
+      // Parse JSON safely
+      let data: ChatResponsePayload | null = null;
+      try {
+        data = (await response.json()) as ChatResponsePayload;
+      } catch {
+        data = null;
+      }
 
       const answerText =
-        data.answer ??
-        data.error ??
-        "Backend responded, but there was no clear `answer` field. Please check the /chat contract.";
+        data?.answer ??
+        data?.error ??
+        "Backend responded but no `answer` field was returned.";
 
-      const aiMessage: Message = {
-        sender: "ai",
-        text: answerText,
-      };
+      appendMessage({ sender: "ai", text: answerText });
+    } catch (error: any) {
+      const msg =
+        error?.name === "AbortError"
+          ? "Request timed out (15s). Is backend running?"
+          : error instanceof Error
+            ? error.message
+            : "Unknown error occurred while talking to backend.";
 
-      appendMessage(aiMessage);
-    } catch (error) {
       console.error("[AIChatWidget] /chat request failed:", error);
-      const aiMessage: Message = {
+
+      appendMessage({
         sender: "ai",
         text:
-          "Sorry, something went wrong while talking to the AI backend. Please try again later.",
-      };
-      appendMessage(aiMessage);
+          "Sorry, I couldn’t reach the AI backend.\n" +
+          `Details: ${msg}\n` +
+          `Using: ${CHAT_URL}`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +164,6 @@ export const AIChatWidget: React.FC = () => {
     <div className={styles.container}>
       {isOpen && (
         <div className={styles.panel} aria-label="Physical AI chat panel">
-          {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerLeft}>
               <span className={styles.title}>Physical AI Assistant</span>
@@ -173,7 +179,6 @@ export const AIChatWidget: React.FC = () => {
             </button>
           </div>
 
-          {/* Messages */}
           <div className={styles.messages}>
             {messages.length === 0 && !isLoading && (
               <div className={styles.emptyState}>
@@ -190,11 +195,7 @@ export const AIChatWidget: React.FC = () => {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={
-                  msg.sender === "user"
-                    ? styles.messageUser
-                    : styles.messageAI
-                }
+                className={msg.sender === "user" ? styles.messageUser : styles.messageAI}
               >
                 {msg.text}
               </div>
@@ -210,7 +211,6 @@ export const AIChatWidget: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
           <div className={styles.inputArea}>
             <textarea
               value={input}
@@ -219,18 +219,13 @@ export const AIChatWidget: React.FC = () => {
               placeholder="Ask a question about this textbook..."
               rows={2}
             />
-            <button
-              type="button"
-              onClick={handleSend}
-              disabled={isLoading || !input.trim()}
-            >
+            <button type="button" onClick={handleSend} disabled={isLoading || !input.trim()}>
               {isLoading ? "Sending…" : "Send"}
             </button>
           </div>
         </div>
       )}
 
-      {/* Floating Action Button */}
       <button
         type="button"
         className={styles.fab}

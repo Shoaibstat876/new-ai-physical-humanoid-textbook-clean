@@ -1,5 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./ChapterActions.module.css";
+
+/**
+ * ✅ PICK ONE (keep only one) depending on where this file lives:
+ *
+ * If file is: apps/book-frontend/src/components/ChapterActions.tsx
+ *   ✅ use:
+ *     import { BACKEND_BASE_URL } from "../config/runtime";
+ 
+ */
+
+// ---- PICK ONE ----
+import { BACKEND_BASE_URL } from "../config/runtime";
+// import { BACKEND_BASE_URL } from "../../config/runtime";
+// ------------------
 
 /**
  * ChapterActions
@@ -60,12 +74,11 @@ import styles from "./ChapterActions.module.css";
  *        "Auto Personalize (Beta) is disabled in this demo. Please use Manual Personalize instead."
  */
 
-// Docusaurus/browser-safe env access (no direct `process` usage in client bundle)
-const API_BASE_URL: string =
-  (typeof process !== "undefined" &&
-    (process as any).env &&
-    (process as any).env.NEXT_PUBLIC_RAG_API_URL) ||
-  "http://localhost:8000";
+// ✅ Single source of truth (runtime config)
+function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/+$/, "");
+}
+const API_BASE_URL = normalizeBaseUrl(BACKEND_BASE_URL);
 
 type Level = "beginner" | "intermediate" | "advanced";
 
@@ -130,8 +143,27 @@ function getAutoPersonalizeOfflineMessage(): string {
   );
 }
 
+// ✅ safer response parsing (won't crash if backend returns non-JSON)
+async function safeReadJson<T>(res: Response): Promise<T | null> {
+  try {
+    const text = await res.text();
+    if (!text) return null;
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
 export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
   const [activeTab, setActiveTab] = useState<TabKey>("ask");
+
+  // Abort in-flight requests on unmount
+  const abortRef = useRef<AbortController | null>(null);
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   // ---------------------------
   // Ask This Section (Level 7)
@@ -150,6 +182,9 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       return;
     }
 
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     setAskLoading(true);
     setAskAnswer(null);
     setAskError(null);
@@ -158,6 +193,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       const res = await fetch(`${API_BASE_URL}/chat/ask-section`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: abortRef.current.signal,
         body: JSON.stringify({
           doc_id: docId,
           selection,
@@ -165,7 +201,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
         }),
       });
 
-      const data = (await res.json()) as AskSectionResponse;
+      const data = await safeReadJson<AskSectionResponse>(res);
       // eslint-disable-next-line no-console
       console.log("[ChapterActions] Ask This Section response:", data);
 
@@ -180,6 +216,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
 
       setAskAnswer(answerText);
     } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
       // eslint-disable-next-line no-console
       console.error("[ChapterActions] Ask This Section failed:", error);
       const message =
@@ -207,6 +244,9 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       return;
     }
 
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     setUrduLoading(true);
     setUrduResult(null);
     setUrduError(null);
@@ -215,12 +255,11 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       const res = await fetch(`${API_BASE_URL}/chat/translate/urdu`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          doc_id: docId,
-        }),
+        signal: abortRef.current.signal,
+        body: JSON.stringify({ doc_id: docId }),
       });
 
-      const data = (await res.json()) as GenericMessageResponse;
+      const data = await safeReadJson<GenericMessageResponse>(res);
       // eslint-disable-next-line no-console
       console.log("[ChapterActions] Translate to Urdu response:", data);
 
@@ -229,10 +268,10 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
         throw new Error(detail || `HTTP error: ${res.status}`);
       }
 
-      const message =
-        extractMessage(data) ?? "No Urdu translation was returned.";
+      const message = extractMessage(data) ?? "No Urdu translation was returned.";
       setUrduResult(message);
     } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
       // eslint-disable-next-line no-console
       console.error("[ChapterActions] Translate to Urdu failed:", error);
       const message =
@@ -261,6 +300,9 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       return;
     }
 
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     setManualLoading(true);
     setManualResult(null);
     setManualError(null);
@@ -269,13 +311,14 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       const res = await fetch(`${API_BASE_URL}/chat/personalize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: abortRef.current.signal,
         body: JSON.stringify({
           doc_id: docId,
           level: manualLevel,
         }),
       });
 
-      const data = (await res.json()) as GenericMessageResponse;
+      const data = await safeReadJson<GenericMessageResponse>(res);
       // eslint-disable-next-line no-console
       console.log("[ChapterActions] Manual Personalize response:", data);
 
@@ -289,6 +332,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
         "No personalized version of this chapter was returned.";
       setManualResult(message);
     } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
       // eslint-disable-next-line no-console
       console.error("[ChapterActions] Manual Personalize failed:", error);
       const message =
@@ -305,9 +349,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
   // Auto Personalize (Level 10 - Beta)
   // ---------------------------
   const [autoResult, setAutoResult] = useState<string | null>(null);
-  const [autoPreferredLevel, setAutoPreferredLevel] = useState<Level | null>(
-    null,
-  );
+  const [autoPreferredLevel, setAutoPreferredLevel] = useState<Level | null>(null);
   const [autoUserEmail, setAutoUserEmail] = useState<string | null>(null);
   const [autoLoading, setAutoLoading] = useState(false);
   const [autoError, setAutoError] = useState<string | null>(null);
@@ -320,6 +362,9 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       return;
     }
 
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     setAutoLoading(true);
     setAutoError(null);
     setAutoResult(null);
@@ -331,20 +376,17 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // send BetterAuth cookies
-        body: JSON.stringify({
-          doc_id: docId,
-        }),
+        signal: abortRef.current.signal,
+        body: JSON.stringify({ doc_id: docId }),
       });
 
       // Explicit 401 → not signed in
       if (res.status === 401) {
-        setAutoError(
-          "Please sign in to your learning account to use Auto Personalize.",
-        );
+        setAutoError("Please sign in to your learning account to use Auto Personalize.");
         return;
       }
 
-      const data = (await res.json()) as AutoPersonalizeResponse;
+      const data = await safeReadJson<AutoPersonalizeResponse>(res);
       // eslint-disable-next-line no-console
       console.log("[ChapterActions] Auto Personalize response:", data);
 
@@ -362,19 +404,17 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
         return;
       }
 
-      if (data.preferred_level) {
-        setAutoPreferredLevel(data.preferred_level);
-      }
-
-      if (typeof data.user_email === "string" && data.user_email.length > 0) {
+      if (data?.preferred_level) setAutoPreferredLevel(data.preferred_level);
+      if (typeof data?.user_email === "string" && data.user_email.length > 0) {
         setAutoUserEmail(data.user_email);
       }
 
-      const markdown =
-        data.personalized_markdown ??
-        "No personalized chapter was returned from the server.";
-      setAutoResult(markdown);
+      setAutoResult(
+        data?.personalized_markdown ??
+          "No personalized chapter was returned from the server.",
+      );
     } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
       // eslint-disable-next-line no-console
       console.error("[ChapterActions] Auto Personalize failed:", error);
 
@@ -384,8 +424,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
         setAutoError(getAutoPersonalizeOfflineMessage());
       } else {
         setAutoError(
-          message ??
-            "Something went wrong while auto-personalizing this chapter.",
+          message ?? "Something went wrong while auto-personalizing this chapter.",
         );
       }
     } finally {
@@ -441,8 +480,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       {activeTab === "ask" && (
         <div className={styles.panel}>
           <p className={styles.helperText}>
-            Type or paste a paragraph from this chapter and ask for
-            clarification.
+            Type or paste a paragraph from this chapter and ask for clarification.
           </p>
           <textarea
             className={styles.textarea}
@@ -501,8 +539,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
       {activeTab === "manual" && (
         <div className={styles.panel}>
           <p className={styles.helperText}>
-            Choose a level and generate a version of this chapter for that
-            learner.
+            Choose a level and generate a version of this chapter for that learner.
           </p>
 
           <div className={styles.row}>
@@ -528,9 +565,7 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
             {manualLoading ? "Personalizing…" : "Generate Personalized Chapter"}
           </button>
 
-          {manualError && (
-            <div className={styles.errorBox}>{manualError}</div>
-          )}
+          {manualError && <div className={styles.errorBox}>{manualError}</div>}
 
           {manualResult && (
             <div className={styles.resultBox}>
@@ -579,10 +614,9 @@ export const ChapterActions: React.FC<ChapterActionsProps> = ({ docId }) => {
             <div className={styles.resultBox}>
               <h4>Auto-Personalized Chapter (Markdown)</h4>
               <p className={styles.helperText}>
-                This preview shows how the AI would rewrite this chapter for
-                your level. In this demo build it&apos;s just an example; in the
-                live system it will be generated automatically from your
-                learning profile.
+                This preview shows how the AI would rewrite this chapter for your
+                level. In this demo build it&apos;s just an example; in the live
+                system it will be generated automatically from your learning profile.
               </p>
               <pre className={styles.pre}>{autoResult}</pre>
             </div>

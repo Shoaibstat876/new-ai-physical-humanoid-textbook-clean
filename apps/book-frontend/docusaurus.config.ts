@@ -1,149 +1,148 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import { themes as prismThemes } from "prism-react-renderer";
+import type { Config } from "@docusaurus/types";
+import type * as Preset from "@docusaurus/preset-classic";
+
+// ✅ Webpack polyfill for browser-safe `process`
+const webpack = require("webpack");
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Physical AI & Humanoid Robotics',
-  tagline: 'AI-Native Textbook for Embodied Intelligence',
+  title: "Physical AI & Humanoid Robotics",
+  tagline: "AI-Native Textbook for Embodied Intelligence",
+  favicon: "img/favicon.ico",
 
-  favicon: 'img/favicon.ico',
-
-  // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    v4: true,
   },
 
-  // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  // ✅ Use localhost-safe defaults for hackathon/demo
+  // (Later, when you deploy, update url to your real domain)
+  url: "http://localhost:3000",
+  baseUrl: "/",
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  // ✅ Replace placeholders with your real org/repo names
+  // If you don't want to expose them yet, keep them generic but NOT "facebook/docusaurus"
+  organizationName: "shoaib", // CHANGE later to your GitHub org/user
+  projectName: "ai-physical-humanoid-textbook", // CHANGE later to your repo name
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: "throw",
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          sidebarPath: "./sidebars.ts",
+          // ✅ Optional: you can leave editUrl, but remove the facebook template link
+          // editUrl: "https://github.com/<your-username>/<your-repo>/tree/main/apps/book-frontend/",
         },
         blog: {
           showReadingTime: true,
           feedOptions: {
-            type: ['rss', 'atom'],
+            type: ["rss", "atom"],
             xslt: true,
           },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
+          onInlineTags: "warn",
+          onInlineAuthors: "warn",
+          onUntruncatedBlogPosts: "warn",
+          // ✅ Optional: same here
+          // editUrl: "https://github.com/<your-username>/<your-repo>/tree/main/apps/book-frontend/",
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
     ],
   ],
 
+  // ✅ Type-safe plugin to configure webpack
+  plugins: [
+    function processPolyfillPlugin() {
+      return {
+        name: "process-polyfill-plugin",
+        configureWebpack() {
+          return {
+            plugins: [
+              new webpack.ProvidePlugin({
+                process: "process/browser",
+              }),
+            ],
+          };
+        },
+      };
+    },
+  ],
+
+  // ✅ Babel loader (keep as-is)
+  webpack: {
+    jsLoader: (isServer) => ({
+      loader: require.resolve("babel-loader"),
+      options: {
+        presets: [require.resolve("@docusaurus/core/lib/babel/preset")],
+      },
+    }),
+  },
+
   themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: "img/docusaurus-social-card.jpg",
     colorMode: {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Physical AI & Humanoid Robotics',
+      title: "Physical AI & Humanoid Robotics",
       logo: {
-        alt: 'Physical AI Logo',
-        src: 'img/logo.svg',
+        alt: "Physical AI Logo",
+        src: "img/logo.svg",
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'textbook', // 🔧 fixed: matches your actual sidebar id
-          position: 'left',
-          label: 'Textbook',
+          type: "docSidebar",
+          sidebarId: "textbook",
+          position: "left",
+          label: "Textbook",
         },
         {
-          to: '/blog',
-          label: 'Blog',
-          position: 'left',
+          to: "/blog",
+          label: "Blog",
+          position: "left",
         },
         {
-          href: 'https://github.com/YOUR_USERNAME/physical-ai-humanoid-textbook',
-          label: 'GitHub',
-          position: 'right',
+          // ✅ Keep generic if you want; update later to your real repo
+          href: "https://github.com/shoaib/ai-physical-humanoid-textbook",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
+          // ✅ FIX: your book starts at foundations/how-to-use-this-book (not /docs/intro)
+          items: [{ label: "Start Here", to: "/docs/foundations/how-to-use-this-book" }],
+        },
+        {
+          title: "Community",
           items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
+            // ✅ Replace Docusaurus promo links with your real community later (safe to keep minimal now)
+            { label: "GitHub", href: "https://github.com/shoaib/ai-physical-humanoid-textbook" },
           ],
         },
         {
-          title: 'Community',
+          title: "More",
           items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
-            },
+            { label: "Blog", to: "/blog" },
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} Physical AI & Humanoid Robotics — Built with Claude Code, Spec-Kit Plus, and OpenAI ChatKit.`,
+      copyright: `© ${new Date().getFullYear()} Physical AI & Humanoid Robotics`,
     },
     prism: {
       theme: prismThemes.github,

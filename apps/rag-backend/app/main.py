@@ -6,9 +6,9 @@ FastAPI application entrypoint.
 
 Responsibilities:
 - Create the FastAPI app instance
-- Configure CORS for the Docusaurus frontend (localhost:3000)
+- Configure CORS for the Docusaurus frontend
 - Wire router modules (chat, health, etc.)
-- Expose a simple root endpoint for quick diagnostics
+- Expose health endpoints
 """
 
 from __future__ import annotations
@@ -33,27 +33,72 @@ app = FastAPI(
 
 
 # ---------------------------------------------------------
-# CORS configuration
+# CORS configuration (SINGLE SOURCE OF TRUTH + SAFE FALLBACKS)
 #
-# Default (hackathon/local):
-# - Frontend runs on: http://localhost:3000
+# Priority:
+# 1) settings.backend_allowed_origins (preferred)
+# 2) CORS_ORIGINS env (comma-separated)
+# 3) localhost fallback (includes 127.0.0.1)
 #
-# Optional (production):
-# - Set CORS_ORIGINS as comma-separated list:
-#   CORS_ORIGINS="https://your-site.vercel.app,https://custom-domain.com"
+# Also:
+# - Avoid "*" when allow_credentials=True
+# - Allow localhost on any port during dev via allow_origin_regex
 # ---------------------------------------------------------
+def _clean_origin(origin: str) -> str:
+    return origin.strip().rstrip("/")
+
+
+def _dedupe_preserve_order(items: List[str]) -> List[str]:
+    seen = set()
+    out: List[str] = []
+    for x in items:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+
 def _get_allowed_origins() -> List[str]:
+    # 1) Preferred: settings.backend_allowed_origins
+    origins_obj = getattr(settings, "backend_allowed_origins", None)
+    if isinstance(origins_obj, list):
+        cleaned = [
+            _clean_origin(o)
+            for o in origins_obj
+            if isinstance(o, str) and o.strip()
+        ]
+        cleaned = _dedupe_preserve_order([o for o in cleaned if o])
+        if cleaned:
+            return cleaned
+
+    # 2) Fallback: env var (comma-separated)
     env = os.getenv("CORS_ORIGINS", "").strip()
     if env:
-        return [o.strip() for o in env.split(",") if o.strip()]
-    return ["http://localhost:3000"]
+        cleaned = [_clean_origin(o) for o in env.split(",") if o.strip()]
+        cleaned = _dedupe_preserve_order([o for o in cleaned if o])
+        if cleaned:
+            return cleaned
+
+    # 3) Final fallback: local dev (both hosts)
+    return ["http://localhost:3000", "http://127.0.0.1:3000"]
 
 
 ALLOWED_ORIGINS = _get_allowed_origins()
 
+# ❗ Critical safety: don't allow "*" with cookies/credentials
+# If "*" appears from env/settings, replace with explicit dev origins
+if "*" in ALLOWED_ORIGINS:
+    ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+ALLOWED_ORIGINS = _dedupe_preserve_order([_clean_origin(o) for o in ALLOWED_ORIGINS])
+
+print("✅ CORS ALLOWED_ORIGINS =", ALLOWED_ORIGINS)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    # ✅ allow any localhost port in dev (Docusaurus sometimes changes port)
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -62,14 +107,6 @@ app.add_middleware(
 
 # ---------------------------------------------------------
 # Routers
-#
-# All chat-related endpoints are in app/routers/chat.py
-# and mounted at:
-#   POST /chat
-#   POST /chat/ask-section
-#   POST /chat/translate/urdu
-#   POST /chat/personalize
-#   POST /chat/personalize/auto
 # ---------------------------------------------------------
 app.include_router(chat.router)
 
@@ -81,15 +118,17 @@ app.include_router(chat.router)
 async def root() -> dict:
     return {
         "message": "Physical AI RAG backend is running",
-        "backend_host": settings.backend_host,
-        "backend_port": settings.backend_port,
         "cors_origins": ALLOWED_ORIGINS,
     }
 
 
 # ---------------------------------------------------------
-# Dedicated health endpoint (nice for Uptime checks)
+# Health endpoint
 # ---------------------------------------------------------
 @app.get("/health", tags=["health"])
 async def health() -> dict:
-    return {"status": "ok", "service": "rag-backend", "version": app.version}
+    return {
+        "status": "ok",
+        "service": "rag-backend",
+        "version": app.version,
+    }

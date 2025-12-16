@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { BACKEND_BASE_URL, AUTH_SERVER_URL } from "../../config/runtime";
 
 type Status = "ok" | "down" | "checking" | "na";
 
@@ -7,10 +8,13 @@ type ProbeResult = {
   checkedAt: number | null;
 };
 
-const DEFAULT_BACKEND_BASE_URL = "http://127.0.0.1:8000";
-const DEFAULT_AUTH_BASE_URL = "http://127.0.0.1:3005";
+const POLL_MS = 5000;
 
-const POLL_MS = 4000;
+// Turn this OFF if you want Auth always N/A until auth server is deployed
+const AUTH_ENABLED = true;
+
+const BACKEND = BACKEND_BASE_URL;
+const AUTH = AUTH_SERVER_URL;
 
 function Chip({ label, status }: { label: string; status: Status }) {
   const { bg, text } = useMemo(() => {
@@ -18,7 +22,7 @@ function Chip({ label, status }: { label: string; status: Status }) {
       case "ok":
         return { bg: "#16a34a", text: "OK" };
       case "down":
-        return { bg: "#dc2626", text: "DOWN" };
+        return { bg: "#dc2626", text: "OFF" };
       case "na":
         return { bg: "#64748b", text: "N/A" };
       default:
@@ -35,7 +39,6 @@ function Chip({ label, status }: { label: string; status: Status }) {
         color: "white",
         fontSize: 12,
         fontWeight: 700,
-        marginRight: 8,
         display: "inline-block",
         letterSpacing: "0.02em",
       }}
@@ -45,31 +48,32 @@ function Chip({ label, status }: { label: string; status: Status }) {
   );
 }
 
-async function probe(url: string): Promise<boolean> {
+async function probe(url: string, timeoutMs = 2500): Promise<boolean> {
+  const controller = new AbortController();
+  const t = globalThis.setTimeout(() => controller.abort(), timeoutMs);
+
   try {
-    // GET is fine for health endpoints; `cache: "no-store"` avoids stale responses in some setups
-    const res = await fetch(url, { method: "GET", cache: "no-store" });
+    const res = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      signal: controller.signal,
+    });
     return res.ok;
   } catch {
     return false;
+  } finally {
+    globalThis.clearTimeout(t);
   }
 }
 
 export default function StatusBar() {
-  // Docusaurus exposes env vars as process.env in build time; keep fallbacks safe.
-  const BACKEND_BASE_URL =
-    (process.env.RAG_API_URL as string | undefined) ?? DEFAULT_BACKEND_BASE_URL;
-
-  const AUTH_BASE_URL =
-    (process.env.AUTH_API_URL as string | undefined) ?? DEFAULT_AUTH_BASE_URL;
-
   const [backend, setBackend] = useState<ProbeResult>({
     status: "checking",
     checkedAt: null,
   });
 
   const [auth, setAuth] = useState<ProbeResult>({
-    status: "checking",
+    status: AUTH_ENABLED ? "checking" : "na",
     checkedAt: null,
   });
 
@@ -77,39 +81,58 @@ export default function StatusBar() {
     let cancelled = false;
 
     const tick = async () => {
-      // If in some branches you truly don't have auth-server, you can flip this to "na"
+      const backendPromise = probe(`${BACKEND}/health`);
+
+      const authPromise = AUTH_ENABLED
+        ? probe(`${AUTH}/healthz`)
+        : Promise.resolve(false);
+
       const [backendOk, authOk] = await Promise.all([
-        probe(`${BACKEND_BASE_URL}/health`),
-        probe(`${AUTH_BASE_URL}/healthz`),
+        backendPromise,
+        authPromise,
       ]);
 
       if (cancelled) return;
 
       const now = Date.now();
+
       setBackend({ status: backendOk ? "ok" : "down", checkedAt: now });
-      setAuth({ status: authOk ? "ok" : "down", checkedAt: now });
+
+      if (!AUTH_ENABLED) {
+        setAuth({ status: "na", checkedAt: now });
+      } else {
+        setAuth({ status: authOk ? "ok" : "down", checkedAt: now });
+      }
     };
 
     tick();
-    const id = window.setInterval(tick, POLL_MS);
+    const id = globalThis.setInterval(tick, POLL_MS);
 
     return () => {
       cancelled = true;
-      window.clearInterval(id);
+      globalThis.clearInterval(id);
     };
-  }, [BACKEND_BASE_URL, AUTH_BASE_URL]);
+  }, [BACKEND, AUTH, AUTH_ENABLED]);
 
   const lastChecked =
     backend.checkedAt || auth.checkedAt
-      ? new Date(Math.max(backend.checkedAt ?? 0, auth.checkedAt ?? 0)).toLocaleTimeString()
+      ? new Date(
+          Math.max(backend.checkedAt ?? 0, auth.checkedAt ?? 0),
+        ).toLocaleTimeString()
       : null;
 
   return (
-    <div style={{ margin: "8px 0 12px", display: "flex", alignItems: "center", gap: 10 }}>
-      <div>
-        <Chip label="Backend" status={backend.status} />
-        <Chip label="Auth" status={auth.status} />
-      </div>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "8px 16px",
+        flexWrap: "wrap",
+      }}
+    >
+      <Chip label="Backend" status={backend.status} />
+      <Chip label="Auth" status={auth.status} />
 
       {lastChecked && (
         <span style={{ fontSize: 12, color: "#64748b" }}>

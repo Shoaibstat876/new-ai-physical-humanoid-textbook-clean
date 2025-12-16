@@ -35,8 +35,7 @@ def normalize_level(level: Optional[str]) -> str:
 def call_openai(system_prompt: str, user_content: str) -> str:
     """
     Single place to call OpenAI so we keep behavior consistent.
-
-    Raises RuntimeError for service-level failures (API layer can decide HTTP mapping).
+    Raises RuntimeError for service-level failures.
     """
     try:
         completion = client.chat.completions.create(
@@ -52,10 +51,9 @@ def call_openai(system_prompt: str, user_content: str) -> str:
     return completion.choices[0].message.content or ""
 
 
-def build_prompt(question: str, contexts: List[str]) -> str:
+def build_rag_prompt(question: str, contexts: List[str]) -> str:
     """
-    Build a strict RAG prompt.
-    We keep it simple and enforce: answer only from context.
+    Build a strict RAG prompt: answer ONLY from context.
     """
     context_block = "\n\n---\n\n".join(contexts) if contexts else "No relevant context found."
 
@@ -69,10 +67,26 @@ def build_prompt(question: str, contexts: List[str]) -> str:
     )
 
 
+def is_small_talk(text: str) -> bool:
+    t = (text or "").strip().lower()
+    return t in {"hi", "hello", "hey", "assalam o alaikum", "asalam o alaikum", "salam", "aoa"}
+
+
+def general_assistant_answer(question: str) -> str:
+    """
+    Friendly fallback when RAG is OFF or context is unavailable.
+    This prevents the annoying 'I don't know...' for normal chat.
+    """
+    system_prompt = (
+        "You are a friendly teaching assistant for the 'Physical AI & Humanoid Robotics' textbook.\n"
+        "If the user greets (like 'hi'), reply warmly and suggest 2 example textbook questions.\n"
+        "Otherwise, answer helpfully using general knowledge.\n"
+        "Keep answers short, clear, and educational.\n"
+    )
+    return call_openai(system_prompt=system_prompt, user_content=question).strip()
+
+
 def level_persona_text(level: str) -> str:
-    """
-    Persona instructions used for explanations + personalization.
-    """
     if level == "advanced":
         return (
             "Explain for an advanced learner. Keep technical details, be precise, "
@@ -90,9 +104,6 @@ def level_persona_text(level: str) -> str:
 
 
 def build_personalization_instruction(level: Optional[str]) -> str:
-    """
-    Map learner level -> rewriting instruction.
-    """
     lvl = normalize_level(level)
 
     if lvl == "beginner":
@@ -115,68 +126,102 @@ def build_personalization_instruction(level: Optional[str]) -> str:
 
 
 # ---------------------------------------------------------
-# RAG Chat (SAFE MODE)
+# RAG Chat (SUPER HYBRID)
 # ---------------------------------------------------------
 
 async def answer_question(req: ChatRequest) -> ChatResponse:
     """
-    Full RAG pipeline for textbook Q&A.
-
-    SAFE MODE behavior (from settings.rag_mode):
-      - "off"  => do not call Qdrant, answer with empty context (will say don't know)
-      - "on"   => Qdrant must work, otherwise raise error
-      - "auto" => try Qdrant; if it fails, silently fallback to no context
+    Hybrid behavior (from settings.rag_mode):
+      - "off"  => friendly general assistant (NO Qdrant, NO strict context rule)
+      - "on"   => strict RAG; Qdrant must work and must have hits (or friendly message)
+      - "auto" => try RAG; if Qdrant fails or no hits, fallback to general assistant
     """
-    contexts: List[str] = []
-    sources: List[Source] = []
 
-    if settings.rag_mode != "off":
-        try:
-            hits = search(req.question, limit=5)
-
-            # ✅ Guard: if Qdrant is OFF / unreachable OR no data indexed, return friendly answer (200 OK)
-            if not hits:
-                return ChatResponse(
-                    answer=(
-                        "RAG is unavailable right now (Qdrant not reachable or no data indexed). "
-                        "Please start Qdrant / index data, or try again later."
-                    ),
-                    sources=[],
-                )
-
-            contexts = [h["text"] for h in hits]
-            sources = [
-                Source(
-                    id=f'{h["doc_id"]}-{h["chunk_index"]}',
-                    text=h["text"],
-                    score=h["score"],
-                )
-                for h in hits
-            ]
-        except Exception as e:
-            if settings.rag_mode == "on":
-                raise RuntimeError(f"Qdrant failed: {e}") from e
-            # "auto" => silent fallback
-
-    prompt = build_prompt(req.question, contexts)
-
-    system_prompt = (
-        "You answer strictly from the provided context.\n"
-        "Rules:\n"
-        "- If context is empty or insufficient, say: \"I don't know based on the provided context.\"\n"
-        "- Do NOT use outside knowledge.\n"
-        "- Keep the answer concise and clear.\n"
-    )
-
-    # ✅ Optional (recommended): OpenAI key guard
+    # 0) API key guard
     if not settings.openai_api_key:
         return ChatResponse(
             answer="OpenAI API key is not configured. Add OPENAI_API_KEY in backend .env.",
             sources=[],
         )
 
-    answer = call_openai(system_prompt=system_prompt, user_content=prompt).strip()
+    question = (req.question or "").strip()
+    if not question:
+        return ChatResponse(answer="Please type a question.", sources=[])
 
+    # 1) Small talk shortcut (works in ALL modes)
+    if is_small_talk(question):
+        return ChatResponse(
+            answer=(
+                "Hello! 👋\n\n"
+                "Try asking:\n"
+                "1) What is a humanoid robot?\n"
+                "2) Explain robot sensors in beginner level.\n"
+            ),
+            sources=[],
+        )
+
+    # 2) If rag_mode OFF => general assistant
+    if settings.rag_mode == "off":
+        answer = general_assistant_answer(question)
+        if not answer:
+            answer = "Hello! Ask me anything about Physical AI or humanoid robotics."
+        return ChatResponse(answer=answer, sources=[])
+
+    # 3) Try Qdrant when rag_mode is ON or AUTO
+    contexts: List[str] = []
+    sources: List[Source] = []
+
+    try:
+        hits = search(question, limit=5)
+    except Exception as e:
+        # ON => hard fail; AUTO => fallback
+        if settings.rag_mode == "on":
+            raise RuntimeError(f"Qdrant failed: {e}") from e
+
+        answer = general_assistant_answer(question)
+        if not answer:
+            answer = "RAG is unavailable right now. Please try again later."
+        return ChatResponse(answer=answer, sources=[])
+
+    # 4) No hits behavior
+    if not hits:
+        if settings.rag_mode == "on":
+            return ChatResponse(
+                answer=(
+                    "I couldn't find relevant textbook context for that question. "
+                    "Try asking more specifically or ensure Qdrant is indexed."
+                ),
+                sources=[],
+            )
+
+        # AUTO => fallback to general assistant
+        answer = general_assistant_answer(question)
+        if not answer:
+            answer = "I couldn't find textbook context, but please try asking differently."
+        return ChatResponse(answer=answer, sources=[])
+
+    # 5) Build strict RAG response (hits exist)
+    contexts = [h["text"] for h in hits]
+    sources = [
+        Source(
+            id=f'{h["doc_id"]}-{h["chunk_index"]}',
+            text=h["text"],
+            score=h["score"],
+        )
+        for h in hits
+    ]
+
+    prompt = build_rag_prompt(question, contexts)
+
+    system_prompt = (
+        "You answer strictly from the provided context.\n"
+        "Rules:\n"
+        "- If context is insufficient, say: \"I don't know based on the provided context.\"\n"
+        "- Do NOT use outside knowledge.\n"
+        "- Keep the answer concise and clear.\n"
+    )
+
+    answer = call_openai(system_prompt=system_prompt, user_content=prompt).strip()
     if not answer:
         answer = "I don't know based on the provided context."
 
@@ -188,11 +233,6 @@ async def answer_question(req: ChatRequest) -> ChatResponse:
 # =====================================================================
 
 async def handle_ask_section(req: ChapterActionRequest) -> ChapterActionResponse:
-    """
-    UI contract:
-      - selection empty => status="error" + friendly message
-      - selection present => status="ok" + explanation
-    """
     if not req.selection or not req.selection.strip():
         return ChapterActionResponse(
             status="error",
@@ -202,7 +242,6 @@ async def handle_ask_section(req: ChapterActionRequest) -> ChapterActionResponse
             ),
         )
 
-    # Optional sanity check: chapter exists (not required to explain selection)
     try:
         _ = load_doc_markdown(req.doc_id)
     except FileNotFoundError:
@@ -246,9 +285,6 @@ async def handle_ask_section(req: ChapterActionRequest) -> ChapterActionResponse
 # ---------------------------------------------------------
 
 async def handle_translate_urdu(req: ChapterActionRequest) -> ChapterActionResponse:
-    """
-    Translate an entire chapter to Urdu, preserving Markdown structure.
-    """
     try:
         markdown = load_doc_markdown(req.doc_id)
     except FileNotFoundError as e:
@@ -280,10 +316,6 @@ async def handle_translate_urdu(req: ChapterActionRequest) -> ChapterActionRespo
 # ---------------------------------------------------------
 
 async def handle_personalize(req: ChapterActionRequest) -> ChapterActionResponse:
-    """
-    Level 8: Manual personalization of a chapter by learner level.
-    Returns rewritten markdown, preserving structure.
-    """
     try:
         markdown = load_doc_markdown(req.doc_id)
     except FileNotFoundError as e:

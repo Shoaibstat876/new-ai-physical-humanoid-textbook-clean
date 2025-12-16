@@ -1,15 +1,19 @@
 import { createAuthClient } from "better-auth/react";
+import { AUTH_SERVER_URL } from "../config/runtime";
 
 /**
- * Spec-Kit Rule Compliance:
- * - ❌ No hard-coded URLs in source files
- * - ✅ Must use environment variable with safe fallback
- * - Frontend should point to BetterAuth server (local or production)
+ * Browser-safe auth client (Docusaurus-safe)
+ * - No process.env in frontend code
+ * - Uses centralized runtime config
  */
 
-const AUTH_URL =
-  process.env.NEXT_PUBLIC_AUTH_SERVER_URL ?? "http://localhost:3005";
+function normalizeBaseUrl(url: string): string {
+  // avoid trailing slash issues: "http://x/" + "/healthz" => double slashes
+  return url.replace(/\/+$/, "");
+}
+
+export const AUTH_BASE_URL = normalizeBaseUrl(AUTH_SERVER_URL);
 
 export const authClient = createAuthClient({
-  baseURL: AUTH_URL,
+  baseURL: AUTH_BASE_URL,
 });

@@ -30,8 +30,6 @@ const sidebars: SidebarsConfig = {
       label: 'Humanoid Robotics',
       collapsed: false,
       items: [
-        // There is no `humanoids/humanoid-overview` doc id,
-        // so we start directly with the engineering overview.
         'humanoids/humanoid-engineering-overview',
         'humanoids/humanoid-locomotion',
         'humanoids/humanoid-manipulation',
@@ -54,7 +52,6 @@ const sidebars: SidebarsConfig = {
         'ros2/ros2-parameters',
         'ros2/ros2-services-actions',
         'ros2/ros2-actions',
-        // Correct doc id for launch files:
         'ros2/ros2-launch-files',
       ],
     },
@@ -98,7 +95,8 @@ const sidebars: SidebarsConfig = {
         'conversational/conversational-ai-introduction',
         'conversational/conversational-ai-natural-language-understanding',
         'conversational/conversational-ai-dialogue-management',
-        'conversational/conversational-dialogue-management',
+        // ✅ removed duplicate/ambiguous id:
+        // 'conversational/conversational-dialogue-management',
         'conversational/conversational-multimodal-ai',
         'conversational/conversational-safety',
       ],

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Dict, List, TypedDict, Any
+import hashlib
 
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct
@@ -94,6 +95,26 @@ def ensure_collection() -> None:
 
 
 # ---------------------------------------------------------
+# Stable point IDs (prevents collisions / overwrites)
+# ---------------------------------------------------------
+
+def _stable_point_id(doc_id: str, chunk_index: int) -> int:
+    """
+    Deterministic stable integer ID for Qdrant points.
+
+    Why:
+      - Using enumerate idx (0..N) causes collisions across re-index runs.
+      - Stable ID ensures upsert updates the *same chunk* predictably.
+
+    Implementation:
+      - sha1(doc_id + ":" + chunk_index) -> take first 16 hex chars -> int (64-bit)
+    """
+    key = f"{doc_id}:{chunk_index}".encode("utf-8")
+    hex16 = hashlib.sha1(key).hexdigest()[:16]  # 64-bit space
+    return int(hex16, 16)
+
+
+# ---------------------------------------------------------
 # Upsert
 # ---------------------------------------------------------
 
@@ -130,15 +151,18 @@ def upsert_chunks(chunks: List[Chunk]) -> None:
         )
 
     points: List[PointStruct] = []
-    for idx, c in enumerate(chunks):
+    for i, c in enumerate(chunks):
+        doc_id = c["doc_id"]
+        chunk_index = int(c["chunk_index"])
+
         points.append(
             PointStruct(
-                # Use simple integer ids based on enumerate index
-                id=idx,
-                vector=vectors[idx],
+                # ✅ Stable unique ID (prevents overwrite collisions)
+                id=_stable_point_id(doc_id, chunk_index),
+                vector=vectors[i],
                 payload={
-                    "doc_id": c["doc_id"],
-                    "chunk_index": c["chunk_index"],
+                    "doc_id": doc_id,
+                    "chunk_index": chunk_index,
                     "text": c["text"],
                 },
             )
@@ -165,26 +189,11 @@ def search(question: str, limit: int = 5) -> List[SearchResult]:
     Level-2 demo guardrail:
       - If Qdrant is down / times out / misconfigured, DO NOT crash the API.
       - Return empty hits instead of raising, so the app responds gracefully.
-
-    Args:
-        question:
-            Natural language question to embed and search for.
-        limit:
-            Maximum number of chunks to return.
-
-    Returns:
-        List[SearchResult]:
-            Each item has:
-              - text: chunk text
-              - doc_id: chapter id
-              - chunk_index: position in chapter
-              - score: similarity score from Qdrant
     """
     if not question.strip():
         return []
 
     try:
-        # embed_texts returns List[List[float]]
         [query_vec] = embed_texts([question])
 
         client = _get_client()
@@ -210,5 +219,4 @@ def search(question: str, limit: int = 5) -> List[SearchResult]:
         return results
 
     except Exception:
-        # ✅ Demo-safe fallback: no crash (no 500). Just behave like "no matches".
         return []

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BACKEND_BASE_URL } from "../config/runtime";
 
 type Level = "beginner" | "intermediate" | "advanced";
 
@@ -7,9 +8,11 @@ type PersonalizeChapterButtonProps = {
   docId: string;
 };
 
-// Prefer env var, fall back to localhost for local dev
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_RAG_API_URL ?? "http://localhost:8000";
+// Single source of truth (runtime config)
+function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/+$/, "");
+}
+const API_BASE_URL = normalizeBaseUrl(BACKEND_BASE_URL);
 
 type AutoPersonalizeResponse = {
   preferred_level?: Level | string;
@@ -45,28 +48,27 @@ function getAutoPersonalizeOfflineMessage(): string {
 function extractMarkdown(data: AutoPersonalizeResponse | null): string | null {
   if (!data || typeof data !== "object") return null;
 
-  if (typeof data.personalized_markdown === "string") {
-    return data.personalized_markdown;
-  }
-  if (typeof data.message === "string") {
-    return data.message;
-  }
-  if (typeof data.markdown === "string") {
-    return data.markdown;
-  }
+  if (typeof data.personalized_markdown === "string") return data.personalized_markdown;
+  if (typeof data.message === "string") return data.message;
+  if (typeof data.markdown === "string") return data.markdown;
+
   return null;
 }
 
-const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
-  docId,
-}) => {
+async function safeJson<T>(res: Response): Promise<T | null> {
+  try {
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({ docId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preferredLevel, setPreferredLevel] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [personalizedMarkdown, setPersonalizedMarkdown] = useState<
-    string | null
-  >(null);
+  const [personalizedMarkdown, setPersonalizedMarkdown] = useState<string | null>(null);
 
   const handlePersonalizeAuto = async () => {
     if (!docId) {
@@ -85,35 +87,23 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
       const res = await fetch(`${API_BASE_URL}/chat/personalize/auto`, {
         method: "POST",
         credentials: "include", // send BetterAuth cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           // IMPORTANT: snake_case to match FastAPI schema
           doc_id: docId,
         }),
       });
 
-      let data: AutoPersonalizeResponse | ErrorShape | null = null;
-
-      try {
-        data = (await res.json()) as AutoPersonalizeResponse | ErrorShape;
-      } catch {
-        data = null;
-      }
+      const data = await safeJson<AutoPersonalizeResponse | ErrorShape>(res);
 
       // Explicit 401 → not signed in
       if (res.status === 401) {
-        setError(
-          "Please sign in to your learning account to use Auto Personalize.",
-        );
+        setError("Please sign in to your learning account to use Auto Personalize.");
         return;
       }
 
       const detail =
-        data && "detail" in data && typeof data.detail === "string"
-          ? data.detail
-          : undefined;
+        data && "detail" in data && typeof data.detail === "string" ? data.detail : undefined;
 
       // Non-OK + auth server offline → friendly Beta message
       if (!res.ok) {
@@ -121,10 +111,7 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
           setError(getAutoPersonalizeOfflineMessage());
           return;
         }
-
-        const message =
-          detail || `Personalization failed (HTTP ${res.status}).`;
-        setError(message);
+        setError(detail || `Personalization failed (HTTP ${res.status}).`);
         return;
       }
 
@@ -134,20 +121,14 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
         return;
       }
 
-      const typedData = data as AutoPersonalizeResponse | null;
+      const typedData = (data ?? null) as AutoPersonalizeResponse | null;
 
       if (typedData) {
-        if (
-          typeof typedData.preferred_level === "string" &&
-          typedData.preferred_level.length > 0
-        ) {
+        if (typeof typedData.preferred_level === "string" && typedData.preferred_level.length > 0) {
           setPreferredLevel(typedData.preferred_level);
         }
 
-        if (
-          typeof typedData.user_email === "string" &&
-          typedData.user_email.length > 0
-        ) {
+        if (typeof typedData.user_email === "string" && typedData.user_email.length > 0) {
           setUserEmail(typedData.user_email);
         }
 
@@ -158,13 +139,9 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
         }
       }
 
-      // If nothing matched, show generic success
-      setPersonalizedMarkdown(
-        "Personalization completed, but no markdown was returned.",
-      );
+      setPersonalizedMarkdown("Personalization completed, but no markdown was returned.");
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Unexpected error occurred.";
+      const message = err instanceof Error ? err.message : "Unexpected error occurred.";
 
       if (isAuthServerOfflineDetail(message)) {
         setError(getAutoPersonalizeOfflineMessage());
@@ -212,35 +189,18 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
           color: "#f9fafb",
         }}
       >
-        {isLoading
-          ? "Personalizing using your profile..."
-          : "Personalize using my profile"}
+        {isLoading ? "Personalizing using your profile..." : "Personalize using my profile"}
       </button>
 
       {error && (
-        <div
-          style={{
-            marginTop: "0.5rem",
-            fontSize: "0.75rem",
-            color: "#b91c1c",
-          }}
-        >
-          {error}
-        </div>
+        <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#b91c1c" }}>{error}</div>
       )}
 
       {(preferredLevel || userEmail) && (
-        <div
-          style={{
-            marginTop: "0.5rem",
-            fontSize: "0.75rem",
-            color: "#6b7280",
-          }}
-        >
+        <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "#6b7280" }}>
           {preferredLevel && (
             <>
-              Detected level from your profile:{" "}
-              <strong>{preferredLevel}</strong>
+              Detected level from your profile: <strong>{preferredLevel}</strong>
             </>
           )}
           {userEmail && (
@@ -263,14 +223,7 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
             whiteSpace: "pre-wrap",
           }}
         >
-          <div
-            style={{
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              marginBottom: "0.25rem",
-              color: "#4b5563",
-            }}
-          >
+          <div style={{ fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.25rem", color: "#4b5563" }}>
             Personalized Version (Markdown):
           </div>
 
