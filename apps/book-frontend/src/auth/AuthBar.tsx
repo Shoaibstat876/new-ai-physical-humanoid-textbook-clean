@@ -4,7 +4,22 @@ import { useAuthDemo } from "./useAuth";
 export const AuthBar: React.FC = () => {
   const { state, signInDemo, signOut } = useAuthDemo();
   const [email, setEmail] = useState("demo@user.com");
-  const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced">("beginner");
+  const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced">(
+    "beginner"
+  );
+
+  // --- Level-5 cookie helpers ---
+  function setDemoCookies(preferredLevel: string) {
+    document.cookie = "demo_session=1; Path=/; SameSite=Lax";
+    document.cookie = `preferred_level=${encodeURIComponent(
+      preferredLevel
+    )}; Path=/; SameSite=Lax`;
+  }
+
+  function clearDemoCookies() {
+    document.cookie = "demo_session=; Path=/; Max-Age=0; SameSite=Lax";
+    document.cookie = "preferred_level=; Path=/; Max-Age=0; SameSite=Lax";
+  }
 
   if (state.isLoggedIn) {
     return (
@@ -18,7 +33,10 @@ export const AuthBar: React.FC = () => {
           </span>
         )}
         <button
-          onClick={signOut}
+          onClick={() => {
+            clearDemoCookies();
+            signOut();
+          }}
           style={{
             padding: "6px 10px",
             borderRadius: 8,
@@ -62,7 +80,10 @@ export const AuthBar: React.FC = () => {
       </select>
 
       <button
-        onClick={() => signInDemo(email, level)}
+        onClick={() => {
+          setDemoCookies(level);
+          signInDemo(email, level);
+        }}
         style={{
           padding: "6px 10px",
           borderRadius: 8,

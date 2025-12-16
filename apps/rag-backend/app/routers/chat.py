@@ -18,7 +18,7 @@ from app.services.rag_service import (
     build_personalization_instruction,  # centralized persona builder
 )
 from app.services.auth_client import (
-    get_user_from_betterauth,
+    get_user,  # ✅ Level-5 unified (demo-safe) user fetcher
     extract_preferred_level,
 )
 from app.services.docs_service import load_doc_markdown
@@ -185,23 +185,21 @@ async def personalize_chapter_auto(
     """
     Auto-personalization endpoint (Level 10).
 
-    If BetterAuth is available:
-      - uses user's preferredLevel from their profile.
+    Level-5 demo mode:
+      - uses /me endpoint (auth-server) via get_user(request)
+      - reads preferredLevel from cookies
 
-    If BetterAuth is OFFLINE or user not logged in:
-      - falls back to a 'beginner' guest profile.
+    Fallback:
+      - if not logged in → beginner guest
     """
 
-    # --- 1) Try to get logged-in user from BetterAuth ---
-    user: Optional[Dict[str, Any]] = await get_user_from_betterauth(request)
+    # --- 1) Try to get logged-in user (Level-5 demo-safe) ---
+    user: Optional[Dict[str, Any]] = await get_user(request)
 
     if user:
         preferred_level = extract_preferred_level(user) or "beginner"
-        user_email: Optional[str] = (
-            user.get("email") if isinstance(user, dict) else None
-        )
+        user_email: Optional[str] = user.get("email") if isinstance(user, dict) else None
     else:
-        # Fallback: demo mode, no auth server / not logged in
         preferred_level = "beginner"
         user_email = None
 
@@ -210,7 +208,6 @@ async def personalize_chapter_auto(
         original_markdown = payload.original_markdown
     else:
         try:
-            # This reads from your Docusaurus docs folder
             original_markdown = load_doc_markdown(payload.doc_id)
         except FileNotFoundError:
             raise HTTPException(
@@ -218,9 +215,7 @@ async def personalize_chapter_auto(
                 detail=f"Chapter markdown not found for doc_id={payload.doc_id!r}.",
             )
 
-    # --- 3) Build personalization instruction from rag_service ---
-    # If build_personalization_instruction can't handle the level,
-    # we fall back to the simpler persona text.
+    # --- 3) Build personalization instruction ---
     try:
         instruction = build_personalization_instruction(preferred_level)
     except Exception:

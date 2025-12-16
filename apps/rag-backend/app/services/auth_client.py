@@ -7,79 +7,162 @@ from fastapi import HTTPException, Request
 
 from app.config import settings
 
-# Base URL for BetterAuth (v1) – will call /api/auth/user
-AUTH_BASE_URL = settings.auth_server_url.rstrip("/") + "/api/auth"
+
+def _normalize(url: str) -> str:
+    return (url or "").rstrip("/")
+
+
+# -----------------------------
+# BetterAuth (future mode)
+# -----------------------------
+def _betterauth_base() -> str:
+    # BetterAuth v1 base: {AUTH_SERVER}/api/auth
+    return _normalize(getattr(settings, "auth_server_url", "")) + "/api/auth"
 
 
 async def get_user_from_betterauth(request: Request) -> Optional[Dict[str, Any]]:
     """
-    Correct endpoint for BetterAuth v1:
+    BetterAuth v1:
       GET /api/auth/user
 
-    We forward the same cookies the browser sends to the backend.
+    We forward cookies from the browser request to auth-server.
 
     Returns:
-        dict | None:
-          - user dict if logged in
-          - None if no cookies or no active session
-          - None if auth server is offline (graceful fallback)
+      - user dict if logged in
+      - None if not logged in or no cookies
+      - None if auth server is offline (graceful fallback)
     """
     cookie_header = request.headers.get("cookie")
     if not cookie_header:
-        # No cookies → probably not logged in
         return None
 
-    url = f"{AUTH_BASE_URL}/user"
+    base = _betterauth_base()
+    if not base or base == "/api/auth":
+        return None
+
+    url = f"{base}/user"
 
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(timeout=5.0) as client:
             resp = await client.get(
                 url,
                 headers={
-                    "Cookie": cookie_header,
+                    "cookie": cookie_header,  # forward cookies
                     "accept": "application/json",
                 },
             )
     except httpx.HTTPError as e:
-        # 🔑 IMPORTANT:
-        # Auth server is down / unreachable → behave as "not logged in"
-        # instead of breaking the whole endpoint.
-        print(f"[auth_client] Failed to reach auth server: {e}")
+        print(f"[auth_client] BetterAuth unreachable: {e}")
         return None
 
-    # Not authenticated / user not found
     if resp.status_code in (401, 404):
         return None
 
-    # Other errors from auth-server (it is up but unhappy)
     if resp.status_code >= 400:
         raise HTTPException(
             status_code=resp.status_code,
-            detail=f"Auth server returned error {resp.status_code} when fetching user.",
+            detail=f"Auth server error {resp.status_code} while fetching user.",
         )
 
-    data = resp.json()  # BetterAuth returns: { user: {...}, session: {...} }
-    user = data.get("user") if isinstance(data, dict) else None
+    data = resp.json()  # BetterAuth usually returns: { user: {...}, session: {...} }
+    if isinstance(data, dict):
+        user = data.get("user")
+        return user if isinstance(user, dict) else None
 
-    return user or None
+    return None
+
+
+# -----------------------------
+# Demo Auth (Level-5 mode)
+# -----------------------------
+async def get_user_from_demo_auth(request: Request) -> Optional[Dict[str, Any]]:
+    """
+    Demo auth-server (our Level-5 approach):
+      GET /me
+
+    Returns:
+      { email, preferredLevel } or None
+    """
+    cookie_header = request.headers.get("cookie")
+    if not cookie_header:
+        return None
+
+    base = _normalize(getattr(settings, "auth_server_url", ""))
+    if not base:
+        return None
+
+    url = f"{base}/me"
+
+    try:
+        async with httpx.AsyncClient(timeout=2.0) as client:
+            resp = await client.get(
+                url,
+                headers={
+                    "cookie": cookie_header,
+                    "accept": "application/json",
+                },
+            )
+    except httpx.HTTPError as e:
+        print(f"[auth_client] Demo auth unreachable: {e}")
+        return None
+
+    if resp.status_code != 200:
+        return None
+
+    data = resp.json()
+    if not isinstance(data, dict):
+        return None
+
+    email = str(data.get("email", "")).strip()
+    preferred = str(data.get("preferredLevel", "beginner")).strip().lower() or "beginner"
+
+    if not email:
+        return None
+
+    if preferred not in {"beginner", "intermediate", "advanced"}:
+        preferred = "beginner"
+
+    return {"email": email, "preferredLevel": preferred}
+
+
+# -----------------------------
+# One function used by backend
+# -----------------------------
+async def get_user(request: Request) -> Optional[Dict[str, Any]]:
+    """
+    Single entry point.
+
+    TODAY (Level-5): we use Demo /me.
+    LATER: when BetterAuth is real, we can switch by env.
+
+    Control:
+      AUTH_MODE=demo | betterauth
+    Default: demo (safe for hackathon)
+    """
+    mode = (getattr(settings, "auth_mode", "") or "").strip().lower()
+
+    if mode == "betterauth":
+        return await get_user_from_betterauth(request)
+
+    # default safe mode
+    return await get_user_from_demo_auth(request)
 
 
 def extract_preferred_level(user: Optional[Dict[str, Any]]) -> str:
     """
-    Extract the user's preferred learning level from the BetterAuth user object.
+    Extract preferred level from either:
+      - BetterAuth user object (maybe user.profile.preferredLevel)
+      - Demo auth object { preferredLevel }
 
-    Normalized return values:
-      - "beginner"
-      - "intermediate"
-      - "advanced"
-
-    Falls back to "beginner" if missing or unrecognized.
+    Returns normalized:
+      - beginner / intermediate / advanced
     """
     if not user:
         return "beginner"
 
-    # Some apps store it under user.profile, some directly on user
-    profile = user.get("profile") or user
+    profile = user.get("profile") if isinstance(user, dict) else None
+    if not isinstance(profile, dict):
+        profile = user
 
     raw = (
         profile.get("preferredLevel")
@@ -88,14 +171,12 @@ def extract_preferred_level(user: Optional[Dict[str, Any]]) -> str:
         or ""
     )
 
-    level = raw.lower().strip()
+    level = str(raw).lower().strip()
 
     if "advanced" in level or level.startswith("adv"):
         return "advanced"
-
     if "intermediate" in level or "medium" in level or level.startswith("inter"):
         return "intermediate"
-
     if "beginner" in level or level.startswith("beg"):
         return "beginner"
 
