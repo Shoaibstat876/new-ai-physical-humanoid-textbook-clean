@@ -1,34 +1,41 @@
+/**
+ * Spec-Kit Trace
+ * Feature: docs-site UI (non-feature presentational component)
+ * Spec: N/A
+ * Plan: N/A
+ * Tasks: N/A
+ * Story: N/A
+ * Task(s): N/A
+ * Purpose: Render homepage feature cards for marketing/overview content in the Docusaurus landing page.
+ * Non-Goals: Implementing product behavior (RAG calls, personalization, auth, navigation logic beyond static links),
+ *            or any stateful/feature logic that must be governed by Spec-Kit specs.
+ *
+ * NOTE: If this component gains real feature behavior, it MUST be moved under a proper specs/<###-feature>/ workflow.
+ */
+
 import type { ReactNode, ReactElement } from "react";
 import type React from "react";
 import clsx from "clsx";
 import Heading from "@theme/Heading";
 import styles from "./styles.module.css";
 
+// Trace: N/A — Presentational-only data model
 type FeatureItem = {
   title: string;
   Svg: React.ComponentType<React.ComponentProps<"svg">>;
   description: ReactNode;
 };
 
-/**
- * HomepageFeatures
- *
- * Purely presentational component for the landing page hero features.
- * This does NOT implement any core Spec-Kit feature logic (no RAG, no chat, no personalization).
- *
- * It is safe to treat this as "marketing/overview UI" and keep it outside
- * of the spec/plan/tasks workflow. If we ever add real behavior here
- * (e.g., navigation, feature toggles), that change must go through Spec-Kit.
- */
+// Trace: N/A — Static homepage content (no feature behavior)
 const featureList: FeatureItem[] = [
   {
     title: "AI-Native Robotics Textbook",
     Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
     description: (
       <>
-        Learn <strong>Physical AI</strong> and <strong>Humanoid Robotics</strong> through an
-        interactive, AI-native textbook. Each chapter is structured for
-        Level-based learning: beginner, intermediate, and advanced.
+        Learn <strong>Physical AI</strong> and <strong>Humanoid Robotics</strong>{" "}
+        through an interactive, AI-native textbook. Each chapter is structured
+        for Level-based learning: beginner, intermediate, and advanced.
       </>
     ),
   },
@@ -48,7 +55,7 @@ const featureList: FeatureItem[] = [
     Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
     description: (
       <>
-        Every feature—from RAG search to personalization—is implemented using
+        Every feature—from RAG search to personalization—is implemented using{" "}
         <code>spec.md</code>, <code>plan.md</code>, and <code>tasks.md</code>.
         No vibe coding: architecture, backend, and UI are all Spec-Kit aligned.
       </>
@@ -56,7 +63,12 @@ const featureList: FeatureItem[] = [
   },
 ];
 
-function FeatureItemCard({ title, Svg, description }: FeatureItem): ReactElement {
+// Trace: N/A — Pure presentational card
+function FeatureItemCard({
+  title,
+  Svg,
+  description,
+}: FeatureItem): ReactElement {
   return (
     <div className={clsx("col col--4")}>
       <div className="text--center">
@@ -70,9 +82,13 @@ function FeatureItemCard({ title, Svg, description }: FeatureItem): ReactElement
   );
 }
 
+// Trace: N/A — Homepage section (static)
 export default function HomepageFeatures(): ReactElement {
   return (
-    <section className={styles.features} aria-label="AI Physical Humanoid Robotics Textbook features">
+    <section
+      className={styles.features}
+      aria-label="AI Physical Humanoid Robotics Textbook features"
+    >
       <div className="container">
         <div className="row">
           {featureList.map((item) => (

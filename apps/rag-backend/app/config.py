@@ -32,7 +32,11 @@ class Settings(BaseSettings):
     backend_host: str = "0.0.0.0"
     backend_port: int = 8000
 
-    # Allowed frontends (CORS)
+    # ✅ RAG toggle (prevents /chat crash)
+    # env: RAG_MODE=on|off
+    rag_mode: str = "on"
+
+    # Allowed frontends (CORS) (note: main.py currently uses CORS_ORIGINS env var)
     backend_allowed_origins: List[str] = ["http://localhost:3000"]
 
     # -----------------------------

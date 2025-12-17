@@ -1,18 +1,33 @@
 """
-Index textbook docs into Qdrant.
+Spec-Kit Trace
+Feature: specs/<###-qdrant-indexing-cli>/
+Spec: specs/<###-qdrant-indexing-cli>/spec.md
+Plan: specs/<###-qdrant-indexing-cli>/plan.md
+Tasks: specs/<###-qdrant-indexing-cli>/tasks.md
+Story: US1 (Priority P1)
+Task(s): T020, T021
+Purpose: CLI script to index textbook markdown documents into Qdrant by:
+         (1) ensuring the collection exists,
+         (2) loading doc markdown by doc_id,
+         (3) chunking text into blocks,
+         (4) upserting chunks into Qdrant.
+Non-Goals: Embedding model selection, advanced semantic chunking, incremental diff indexing,
+           or pipeline orchestration. This is a demo-safe indexing utility.
 
-Run from apps/rag-backend with:
-    .\.venv\Scripts\activate
-    python scripts/index_textbook.py
+Run from apps/rag-backend:
+  .\.venv\Scripts\activate
+  python scripts/index_textbook.py
+
+NOTE: Replace <...> placeholders with your real feature folder + IDs.
 """
 
-from pathlib import Path
 from typing import List
 
-from app.services.qdrant_service import ensure_collection, upsert_chunks
 from app.services.docs_service import load_doc_markdown
+from app.services.qdrant_service import ensure_collection, upsert_chunks
 
-# List the doc_ids you want to index
+
+# Trace: US1 / T020 — Doc IDs to index (matches Docusaurus doc routes)
 DOC_IDS: List[str] = [
     "foundations/how-to-use-this-book",
     "foundations/why-physical-ai-matters",
@@ -23,16 +38,23 @@ DOC_IDS: List[str] = [
     "foundations/robot-control-systems",
     "foundations/actuation-and-locomotion",
     "foundations/humanoid-design-kinematics",
-    # add more doc_ids as you create pages
+    # Add more doc_ids as you create pages
 ]
 
 
+# Trace: US1 / T021 — Minimal chunker (demo-safe, deterministic)
 def simple_chunk(text: str, doc_id: str, max_chars: int = 800) -> List[dict]:
     """
     Very simple chunker: split text into ~max_chars blocks.
+
+    Contract (chunk dict):
+      - id: stable string key
+      - doc_id: source doc identifier
+      - chunk_index: monotonic index within doc
+      - text: chunk content
     """
     chunks: List[dict] = []
-    current = []
+    current: List[str] = []
     current_len = 0
     idx = 0
 
@@ -70,6 +92,7 @@ def simple_chunk(text: str, doc_id: str, max_chars: int = 800) -> List[dict]:
     return chunks
 
 
+# Trace: US1 / T020,T021 — Script entrypoint
 def main() -> None:
     print("Ensuring Qdrant collection exists...")
     ensure_collection()

@@ -4,6 +4,7 @@ title: Start Here
 sidebar_label: Start Here
 ---
 
+import Link from '@docusaurus/Link';
 import { ChapterActions } from '@site/src/components/ChapterActions';
 
 # Welcome to the AI Physical Humanoid Textbook 👋
@@ -42,10 +43,21 @@ A complete end-to-end system demonstrating:
 - translation  
 - personalization  
 - vision + control reasoning  
-- system integration
+- system integration  
 
 This represents how real humanoid AI systems are built and deployed.
 
 ---
 
 <ChapterActions docId="intro" />
+
+---
+
+<div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
+  <Link
+    className="button button--secondary"
+    to="/docs/modules"
+  >
+    ← Back to Modules
+  </Link>
+</div>

@@ -1,0 +1,99 @@
+---
+title: Modules
+sidebar_label: Modules
+sidebar_position: 1
+slug: /modules
+---
+
+import React from "react";
+import Link from "@docusaurus/Link";
+
+export const modules = [
+  {
+    title: "Module 1: Foundations of Physical AI",
+    tag: "FOUNDATIONS",
+    desc:
+      "What is Physical AI and why embodied intelligence matters. Core ideas, learning path, and how to use this textbook effectively.",
+    to: "/docs/foundations/how-to-use-this-book",
+  },
+  {
+    title: "Module 2: Sensors & Actuators",
+    tag: "HARDWARE",
+    desc:
+      "How robots sense and move: cameras, IMUs, encoders, touch sensors, motors, torque, and feedback loops.",
+    to: "/docs/foundations/robot-control-systems",
+  },
+  {
+    title: "Module 3: Robot Perception",
+    tag: "PERCEPTION",
+    desc:
+      "Turn raw sensor data into meaning: perception pipelines, vision basics, multimodal sensing, and localization.",
+    to: "/docs/foundations/robot-sensors-and-perception",
+  },
+  {
+    title: "Module 4: Planning & Control",
+    tag: "CONTROL",
+    desc:
+      "Decision-making in physical systems: motion planning, control, safety constraints, and stable movement.",
+    to: "/docs/foundations/robot-control-systems",
+  },
+  {
+    title: "Module 5: Humanoid Systems",
+    tag: "HUMANOIDS",
+    desc:
+      "Humanoids end-to-end: architecture, balance, locomotion, manipulation, and real-world constraints.",
+    to: "/docs/foundations/humanoid-design-kinematics",
+  },
+  {
+    title: "Module 6: Ethics & Safety",
+    tag: "SAFETY",
+    desc:
+      "Safety, reliability, ethics, and responsible deployment of Physical AI systems around humans.",
+    to: "/docs/conversational/conversational-safety",
+  },
+];
+
+export default function ModulesPage() {
+  return (
+    <div className="modulesPage">
+      <section className="modulesHero">
+        <div className="modulesContainer">
+          <h1 className="modulesHeroTitle">Explore All Modules</h1>
+          <p className="modulesHeroSubtitle">
+            A structured learning path for Physical AI & Humanoid Robotics — from
+            foundations to safe deployment.
+          </p>
+
+          {/* Only ONE clear action */}
+          <div className="modulesHeroCtas">
+            <Link className="button button--secondary" to="/docs/intro">
+              Back to Docs
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="modulesSection">
+        <div className="modulesContainer">
+          <div className="modulesGrid">
+            {modules.map((m) => (
+              <div key={m.title} className="modulesCard">
+                <div>
+                  <div className="modulesTag">{m.tag}</div>
+                  <h2 className="modulesTitle">{m.title}</h2>
+                  <p className="modulesDesc">{m.desc}</p>
+                </div>
+
+                <div className="modulesCardActions">
+                  <Link className="modulesBtn" to={m.to}>
+                    Open Module →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

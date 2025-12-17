@@ -1,4 +1,18 @@
-//apps/auth-server/server.js
+/**
+ * Spec-Kit Trace
+ * Feature: specs/<###-feature-name>/
+ * Spec: specs/<###-feature-name>/spec.md
+ * Plan: specs/<###-feature-name>/plan.md
+ * Tasks: specs/<###-feature-name>/tasks.md
+ * Story: US<1|2|3> (Priority Px)
+ * Task(s): T###, T###
+ * Purpose: Minimal demo auth-server: exposes /healthz and a root route for frontend wiring.
+ * Non-Goals: Real authentication, sessions/cookies, user persistence, authorization, production security.
+ *
+ * NOTE: Replace <...> placeholders with your real feature folder + IDs.
+ */
+
+// apps/auth-server/server.js
 const express = require("express");
 const cors = require("cors");
 
@@ -9,7 +23,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 3005;
 const TRUSTED_ORIGINS = (process.env.TRUSTED_ORIGINS || "http://localhost:3000")
   .split(",")
-  .map(s => s.trim());
+  .map((s) => s.trim());
 
 // cors
 app.use(
@@ -19,12 +33,12 @@ app.use(
   })
 );
 
-// health
+// Trace: US? / T??? — health check for dev wiring
 app.get("/healthz", (req, res) => {
   res.json({ status: "ok", service: "auth-server", version: "0.1.0" });
 });
 
-// placeholder routes (so frontend won’t panic later)
+// Trace: US? / T??? — placeholder route for simple smoke test
 app.get("/", (req, res) => res.send("auth-server running"));
 
 app.listen(PORT, () => {

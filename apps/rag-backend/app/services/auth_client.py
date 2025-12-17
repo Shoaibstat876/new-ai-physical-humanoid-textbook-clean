@@ -1,3 +1,21 @@
+"""
+Spec-Kit Trace
+Feature: specs/<###-betterauth-integration>/
+Spec: specs/<###-betterauth-integration>/spec.md
+Plan: specs/<###-betterauth-integration>/plan.md
+Tasks: specs/<###-betterauth-integration>/tasks.md
+Story: US1 (Priority P1)
+Task(s): T030, T031
+Purpose: Backend-side BetterAuth client helper to:
+         (1) fetch the logged-in user from BetterAuth by forwarding browser cookies,
+         (2) extract/normalize preferred learning level for personalization flows.
+Non-Goals: Session creation, sign-in/out, account management, or token validation.
+           This module is a thin client + normalization layer.
+
+NOTE: Replace <...> placeholders with your real feature folder + IDs.
+This file is security-adjacent. Keep behavior deterministic and fail-safe.
+"""
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional
@@ -7,13 +25,15 @@ from fastapi import HTTPException, Request
 
 from app.config import settings
 
-# Base URL for BetterAuth (v1) – will call /api/auth/user
+
+# Trace: US1 / T030 — Base URL for BetterAuth (v1). We call GET /api/auth/user
 AUTH_BASE_URL = settings.auth_server_url.rstrip("/") + "/api/auth"
 
 
+# Trace: US1 / T030 — Fetch current user (if logged in) by forwarding cookies
 async def get_user_from_betterauth(request: Request) -> Optional[Dict[str, Any]]:
     """
-    Correct endpoint for BetterAuth v1:
+    BetterAuth v1:
       GET /api/auth/user
 
     We forward the same cookies the browser sends to the backend.
@@ -41,9 +61,8 @@ async def get_user_from_betterauth(request: Request) -> Optional[Dict[str, Any]]
                 },
             )
     except httpx.HTTPError as e:
-        # 🔑 IMPORTANT:
-        # Auth server is down / unreachable → behave as "not logged in"
-        # instead of breaking the whole endpoint.
+        # Trace: US1 / T030 — Auth server down/unreachable → treat as "not logged in"
+        # (do not break the caller endpoint)
         print(f"[auth_client] Failed to reach auth server: {e}")
         return None
 
@@ -58,12 +77,14 @@ async def get_user_from_betterauth(request: Request) -> Optional[Dict[str, Any]]
             detail=f"Auth server returned error {resp.status_code} when fetching user.",
         )
 
-    data = resp.json()  # BetterAuth returns: { user: {...}, session: {...} }
+    # BetterAuth returns: { "user": {...}, "session": {...} }
+    data = resp.json()
     user = data.get("user") if isinstance(data, dict) else None
 
     return user or None
 
 
+# Trace: US1 / T031 — Normalize preferred level for personalization
 def extract_preferred_level(user: Optional[Dict[str, Any]]) -> str:
     """
     Extract the user's preferred learning level from the BetterAuth user object.

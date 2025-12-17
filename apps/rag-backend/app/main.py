@@ -46,7 +46,7 @@ def _get_allowed_origins() -> List[str]:
     env = os.getenv("CORS_ORIGINS", "").strip()
     if env:
         return [o.strip() for o in env.split(",") if o.strip()]
-    return ["http://localhost:3000"]
+    return ["http://localhost:3000", "http://localhost:3001"]
 
 
 ALLOWED_ORIGINS = _get_allowed_origins()

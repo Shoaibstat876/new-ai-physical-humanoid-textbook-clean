@@ -1,3 +1,19 @@
+/**
+ * Spec-Kit Trace
+ * Feature: specs/<###-level-5-auto-personalize>/
+ * Spec: specs/<###-level-5-auto-personalize>/spec.md
+ * Plan: specs/<###-level-5-auto-personalize>/plan.md
+ * Tasks: specs/<###-level-5-auto-personalize>/tasks.md
+ * Story: US1 (Priority P1)
+ * Task(s): T030, T031
+ * Purpose: Render an Auto Personalize (Beta) UI that calls POST /chat/personalize/auto with doc_id,
+ *          reads the backend response, and displays detected level + personalized markdown or friendly errors.
+ * Non-Goals: Manual personalize UI, streaming output, rich markdown rendering, editor UX, production auth handling,
+ *            or server-side session management.
+ *
+ * NOTE: Replace <...> placeholders with your real feature folder + IDs.
+ */
+
 import React, { useState } from "react";
 
 type Level = "beginner" | "intermediate" | "advanced";
@@ -24,6 +40,7 @@ type ErrorShape = {
   detail?: string;
 };
 
+// Trace: US1 / T030 — Detect auth-server-offline style errors for demo-friendly messaging
 function isAuthServerOfflineDetail(detail: string | undefined): boolean {
   if (!detail) return false;
   const lowered = detail.toLowerCase();
@@ -35,6 +52,7 @@ function isAuthServerOfflineDetail(detail: string | undefined): boolean {
   );
 }
 
+// Trace: US1 / T030 — Consistent offline message
 function getAutoPersonalizeOfflineMessage(): string {
   return (
     "Auto Personalize (Beta) is disabled in this demo. " +
@@ -42,6 +60,7 @@ function getAutoPersonalizeOfflineMessage(): string {
   );
 }
 
+// Trace: US1 / T031 — Extract markdown field from backend response (supports multiple backend keys)
 function extractMarkdown(data: AutoPersonalizeResponse | null): string | null {
   if (!data || typeof data !== "object") return null;
 
@@ -57,6 +76,7 @@ function extractMarkdown(data: AutoPersonalizeResponse | null): string | null {
   return null;
 }
 
+// Trace: US1 / T030,T031 — Auto personalize CTA for chapter pages
 const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
   docId,
 }) => {
@@ -104,9 +124,7 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
 
       // Explicit 401 → not signed in
       if (res.status === 401) {
-        setError(
-          "Please sign in to your learning account to use Auto Personalize.",
-        );
+        setError("Please sign in to your learning account to use Auto Personalize.");
         return;
       }
 
@@ -122,8 +140,7 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
           return;
         }
 
-        const message =
-          detail || `Personalization failed (HTTP ${res.status}).`;
+        const message = detail || `Personalization failed (HTTP ${res.status}).`;
         setError(message);
         return;
       }
@@ -160,7 +177,7 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
 
       // If nothing matched, show generic success
       setPersonalizedMarkdown(
-        "Personalization completed, but no markdown was returned.",
+        "Personalization completed, but no markdown was returned."
       );
     } catch (err: unknown) {
       const message =
@@ -239,8 +256,7 @@ const PersonalizeChapterButton: React.FC<PersonalizeChapterButtonProps> = ({
         >
           {preferredLevel && (
             <>
-              Detected level from your profile:{" "}
-              <strong>{preferredLevel}</strong>
+              Detected level from your profile: <strong>{preferredLevel}</strong>
             </>
           )}
           {userEmail && (

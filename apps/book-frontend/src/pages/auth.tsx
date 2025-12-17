@@ -1,3 +1,19 @@
+/**
+ * Spec-Kit Trace
+ * Feature: specs/<###-auth-page-betterauth>/
+ * Spec: specs/<###-auth-page-betterauth>/spec.md
+ * Plan: specs/<###-auth-page-betterauth>/plan.md
+ * Tasks: specs/<###-auth-page-betterauth>/tasks.md
+ * Story: US1 (Priority P1)
+ * Task(s): T040, T041
+ * Purpose: Provide Sign Up + Sign In UI that talks to BetterAuth endpoints and captures user profile fields
+ *          (software/hardware background + preferredLevel) used for personalization.
+ * Non-Goals: Full account management (reset password, email verification), advanced validation UX,
+ *            social login, production-ready error taxonomy, or server-side rendering.
+ *
+ * NOTE: Replace <...> placeholders with your real feature folder + IDs.
+ */
+
 import React, { useState, FormEvent } from "react";
 
 type PreferredLevel = "beginner" | "intermediate" | "advanced";
@@ -14,6 +30,7 @@ type AuthResponseShape = {
   [key: string]: unknown;
 };
 
+// Trace: US1 / T041 — Parse JSON best-effort so UI can show friendly messages
 function parseJsonSafe(response: Response): Promise<unknown> {
   return response
     .json()
@@ -21,12 +38,14 @@ function parseJsonSafe(response: Response): Promise<unknown> {
     .catch(() => null);
 }
 
+// Trace: US1 / T041 — Extract FastAPI-style error detail
 function extractDetail(data: unknown): string | undefined {
   if (!data || typeof data !== "object") return undefined;
   const maybe = data as { detail?: unknown };
   return typeof maybe.detail === "string" ? maybe.detail : undefined;
 }
 
+// Trace: US1 / T041 — Identify "auth server offline" error shapes for demo
 function isAuthServerOffline(message: string | undefined): boolean {
   if (!message) return false;
   const lower = message.toLowerCase();
@@ -39,6 +58,7 @@ function isAuthServerOffline(message: string | undefined): boolean {
   );
 }
 
+// Trace: US1 / T041 — Consistent offline message
 function offlineMessage(): string {
   return (
     "Auth server is offline in this demo. " +
@@ -46,6 +66,7 @@ function offlineMessage(): string {
   );
 }
 
+// Trace: US1 / T040,T041 — BetterAuth Sign Up + Sign In UI
 const AuthPage: React.FC = () => {
   // ------- Sign up state -------
   const [signUpEmail, setSignUpEmail] = useState("");
@@ -174,8 +195,7 @@ const AuthPage: React.FC = () => {
         maxWidth: "900px",
         margin: "2rem auto",
         padding: "1rem",
-        fontFamily:
-          "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
       <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
@@ -234,9 +254,7 @@ const AuthPage: React.FC = () => {
             <select
               value={softwareBackground}
               onChange={(e) =>
-                setSoftwareBackground(
-                  e.target.value as PreferredLevel,
-                )
+                setSoftwareBackground(e.target.value as PreferredLevel)
               }
               style={{
                 width: "100%",
@@ -245,9 +263,7 @@ const AuthPage: React.FC = () => {
                 marginBottom: "0.75rem",
               }}
             >
-              <option value="beginner">
-                Beginner — new to programming
-              </option>
+              <option value="beginner">Beginner — new to programming</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced developer</option>
             </select>
@@ -265,13 +281,9 @@ const AuthPage: React.FC = () => {
                 marginBottom: "0.75rem",
               }}
             >
-              <option value="none">
-                No hardware yet (laptop only)
-              </option>
+              <option value="none">No hardware yet (laptop only)</option>
               <option value="basic">Basic Arduino / sensors</option>
-              <option value="robotics">
-                Robotics club / lab access
-              </option>
+              <option value="robotics">Robotics club / lab access</option>
             </select>
           </label>
 
@@ -336,9 +348,7 @@ const AuthPage: React.FC = () => {
               style={{
                 marginTop: "0.5rem",
                 fontSize: "0.8rem",
-                color: signUpStatus.startsWith("Account")
-                  ? "#065f46"
-                  : "#b91c1c",
+                color: signUpStatus.startsWith("Account") ? "#065f46" : "#b91c1c",
               }}
             >
               {signUpStatus}

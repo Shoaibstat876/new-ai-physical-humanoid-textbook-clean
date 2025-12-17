@@ -1,19 +1,43 @@
+/**
+ * Spec-Kit Trace
+ * Feature: specs/<###-system-status-bar>/
+ * Spec: specs/<###-system-status-bar>/spec.md
+ * Plan: specs/<###-system-status-bar>/plan.md
+ * Tasks: specs/<###-system-status-bar>/tasks.md
+ * Story: US1 (Priority P1)
+ * Task(s): T005
+ * Purpose: Display real-time health status of backend and auth-server services
+ *          for development and demo verification.
+ * Non-Goals: Monitoring alerts, retries/backoff, production observability,
+ *            metrics aggregation, or SLA reporting.
+ *
+ * NOTE: Replace <###-system-status-bar>, US1, and T005 with exact feature IDs.
+ */
+
 import React, { useEffect, useState } from "react";
 
+// Trace: US1 / T005 — Health status states
 type Status = "ok" | "down" | "checking" | "na";
 
+// Trace: US1 / T005 — Visual status chip (presentational)
 function Chip({ label, status }: { label: string; status: Status }) {
   const color =
-    status === "ok" ? "#16a34a" :
-    status === "down" ? "#dc2626" :
-    status === "na" ? "#64748b" :
-    "#f59e0b";
+    status === "ok"
+      ? "#16a34a"
+      : status === "down"
+      ? "#dc2626"
+      : status === "na"
+      ? "#64748b"
+      : "#f59e0b";
 
   const text =
-    status === "ok" ? "OK" :
-    status === "down" ? "DOWN" :
-    status === "na" ? "N/A" :
-    "CHECKING";
+    status === "ok"
+      ? "OK"
+      : status === "down"
+      ? "DOWN"
+      : status === "na"
+      ? "N/A"
+      : "CHECKING";
 
   return (
     <span
@@ -32,14 +56,23 @@ function Chip({ label, status }: { label: string; status: Status }) {
   );
 }
 
+// Trace: US1 / T005 — Global system health status bar
 export default function StatusBar() {
   const [backend, setBackend] = useState<Status>("checking");
-  const [auth, setAuth] = useState<Status>("na"); // ✅ no auth-server in this repo yet
+  const [auth, setAuth] = useState<Status>("checking");
 
   useEffect(() => {
-    fetch("http://localhost:8000/health")
+    // Trace: US1 / T005 — Backend health probe
+    fetch("http://127.0.0.1:8000/health")
       .then(() => setBackend("ok"))
       .catch(() => setBackend("down"));
+
+    // Trace: US1 / T005 — Auth-server health probe
+    fetch("http://127.0.0.1:3005/healthz", {
+      credentials: "include",
+    })
+      .then(() => setAuth("ok"))
+      .catch(() => setAuth("down"));
   }, []);
 
   return (

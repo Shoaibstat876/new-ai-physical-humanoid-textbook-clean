@@ -1,3 +1,19 @@
+/**
+ * Spec-Kit Trace
+ * Feature: docs-site UI (non-feature presentational styles)
+ * Spec: N/A
+ * Plan: N/A
+ * Tasks: N/A
+ * Story: N/A
+ * Task(s): N/A
+ * Purpose: Provide static styling for the homepage feature section and SVG illustrations.
+ * Non-Goals: Layout logic, responsive behavior tied to application state,
+ *            theme-level tokens, or feature-driven visual changes.
+ *
+ * NOTE: If these styles begin to influence feature behavior or dynamic layout,
+ * they must be governed by a proper specs/<###-feature>/ workflow.
+ */
+
 .features {
   display: flex;
   align-items: center;
