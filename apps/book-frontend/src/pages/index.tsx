@@ -49,11 +49,11 @@ function HomepageHeader() {
             className="button button--secondary button--lg"
             to="/docs/foundations/how-to-use-this-book"
           >
-            Start the textbook
+            Textbook
           </Link>
 
           <Link className="button button--outline button--lg" to="/docs/modules">
-            Explore Modules
+            Modules
           </Link>
         </div>
 
