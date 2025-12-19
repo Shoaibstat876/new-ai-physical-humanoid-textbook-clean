@@ -35,8 +35,10 @@ export default function Root({ children }: RootProps) {
         <AuthBar />
       </div>
 
-      {/* Trace: US1 / T001 — Global system health status */}
-      <StatusBar />
+            {/* Trace: US1 / T001 — Global system health status (dev-only) */}
+      {typeof window !== "undefined" &&
+        window.location.hostname === "localhost" && <StatusBar />}
+
 
       {/* Trace: US1 / T001 — Main page content */}
       {children}
